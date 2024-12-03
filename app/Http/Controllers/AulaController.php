@@ -53,15 +53,14 @@ class AulaController extends Controller
                 ->withCookie(cookie('error', 'Error al registrar. Operación cancelada', 1));
         }
     }
- 
+  
     
     public function show(Request $request){
-        $query =Aula::with('grado'); 
+        $query =Aula::query(); 
     
-        if ($request->has('search') && $request->search != '') {
-            $query->whereHas('grado', function($q) use ($request) {
-                $q->where('nombre', 'like', '%' . $request->search . '%');
-            });
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('nombre', 'like', '%' . $request->search . '%');
+        
         }
     
         $aula = $query->paginate(20); // Cambia esto para paginación
@@ -120,24 +119,16 @@ class AulaController extends Controller
                 ->withCookie(cookie('error', 'Error al actualizar. Operación cancelada: ' . $e->getMessage(), 1));
         }
     }
-
-
-
     
     public function delete(Request $request){
-        $query =Aula::with('grado'); 
+        $query =Aula::query(); 
     
-        // if ($request->has('search') && $request->search != '') {
-        //     $query->whereHas('nivel', function($q) use ($request) {
-        //         $q->where('nombre', 'like', '%' . $request->search . '%');
-        //     });
-        // }
-
-        if ($request->has('search') && $request->search != '') {
+        if ($request->has('search') && !empty($request->search)) {
             $query->where('nombre', 'like', '%' . $request->search . '%');
+        
         }
     
-        $aula = $query->paginate(4); // Cambia esto para paginación
+        $aula = $query->paginate(20); // Cambia esto para paginación
     
         return view('aula.eliminar', compact('aula')); 
    }
@@ -162,5 +153,28 @@ class AulaController extends Controller
             ->withCookie(cookie('success', 'Aula eliminado con éxito.', 1, '/', null, false, false));
         }
         return redirect()->back()->with('error', 'Registro no encontrado.');
+    }
+
+
+
+    public function listar(Request $request)
+    {
+        // Crear una consulta básica
+        $query = Aula::with('grado.nivel');
+
+        // Aplicar filtro si se recibe un parámetro de búsqueda
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->search . '%') // Filtrar por nombre del aula
+                    ->orWhereHas('grado', function ($subquery) use ($request) {
+                        $subquery->where('nombre', 'like', '%' . $request->search . '%'); // Filtrar por grado
+                    });
+            });
+        }
+
+        // Paginación de 10 elementos por página
+        $aulas = $query->paginate(10);
+
+        return view('aula.listar', compact('aulas'));
     }
 }

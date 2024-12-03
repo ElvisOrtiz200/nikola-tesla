@@ -17,21 +17,23 @@ class ApoderadoController extends Controller
     {
         return view('apoderado.crear');
     }
-
-    public function store(Request $request) {
-        //
-        try {
+  
+public function store(Request $request) {
+        // 
+        try { 
             $validator = FacadesValidator::make(request()->all(), [
-                'apo_dni' => 'required',
+                'apo_dni' => 'required|unique:acad_apoderado,apo_dni',
                 'apo_apellidos' => 'required',
                 'apo_nombres' => 'required',
                 'apo_direccion' => 'required',
-                'apo_telefono' => 'required',
+                'apo_telefono' => 'required|unique:acad_apoderado,apo_telefono',
             ]);
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                $errorMessages = implode(' ', $validator->errors()->all());
+                return redirect()->route('apoderado.create')
+                    ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
             }
-
+ 
             $apoderado = new Apoderado();
             $apoderado->apo_dni = request()->apo_dni;
             $apoderado->apo_apellidos = request()->apo_apellidos;
@@ -45,7 +47,7 @@ class ApoderadoController extends Controller
         } catch (\Exception $e) {
             // Manejar la excepción (puedes loguear el error o mostrar un mensaje)
             return redirect()->route('apoderado.create')
-                ->withCookie(cookie('error', 'Error al registrar. Operación cancelada', 1));
+            ->withCookie(cookie('error', 'Error al registrar. Operación cancelada: ' . $e->getMessage(), 1, '/', null, false, false));
         }
     }
  
@@ -67,30 +69,46 @@ class ApoderadoController extends Controller
 
         return view('apoderado.editando', compact('apoderado'));
     }
-
+ 
 
     public function update(Request $request, $id) {
-
-        
-        $validator = FacadesValidator::make(request()->all(), [
-                'apo_dni' => 'required',
+        try {
+            $validator = FacadesValidator::make(request()->all(), [
+                'apo_dni' => 'required|unique:acad_apoderado,apo_dni,' . $id . ',apo_dni' ,// Excluir el DNI actual
                 'apo_apellidos' => 'required',
                 'apo_nombres' => 'required',
                 'apo_direccion' => 'required',
-                'apo_telefono' => 'required',
-        ]);
-
-        $apoderado = Apoderado::findOrFail($id); 
-        $apoderado->apo_dni = $request->apo_dni;
-        $apoderado->apo_apellidos = $request->apo_apellidos;
-        $apoderado->apo_nombres = $request->apo_nombres;
-        $apoderado->apo_direccion = $request->apo_direccion;
-        $apoderado->apo_telefono = $request->apo_telefono;
-        $apoderado->save();
+                'apo_telefono' => 'required|unique:acad_apoderado,apo_telefono,'. $id . ',apo_dni' ,
+            ]);
     
-        return redirect()->route('apoderado.show') // Cambia a la ruta que desees
-        ->withCookie(cookie('success', 'Apoderado actualizado con éxito.', 1, '/', null, false, false));
+            if ($validator->fails()) {
+                $errorMessages = implode(' ', $validator->errors()->all());
+                return redirect()->route('apoderado.show', $id) // Usamos 'edit' en lugar de 'create'
+                    ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
+            }
+    
+            // Encontrar el apoderado por el ID
+            $apoderado = Apoderado::findOrFail($id);
+    
+            // Actualizar los campos
+            $apoderado->apo_dni = $request->apo_dni;
+            $apoderado->apo_apellidos = $request->apo_apellidos;
+            $apoderado->apo_nombres = $request->apo_nombres;
+            $apoderado->apo_direccion = $request->apo_direccion;
+            $apoderado->apo_telefono = $request->apo_telefono;
+            $apoderado->save();
+    
+            // Redirigir con mensaje de éxito
+            return redirect()->route('apoderado.show', $id) // Cambia a la ruta que desees
+                ->withCookie(cookie('success', 'Apoderado actualizado con éxito.', 1, '/', null, false, false));
+    
+        } catch (\Exception $e) {
+            // Manejar la excepción (puedes loguear el error o mostrar un mensaje)
+            return redirect()->route('apoderado.show', $id)
+                ->withCookie(cookie('error', 'Error al actualizar. Operación cancelada: ' . $e->getMessage(), 1, '/', null, false, false));
+        }
     }
+    
 
     public function delete(Request $request){
         $query = Apoderado::query();
@@ -124,4 +142,26 @@ class ApoderadoController extends Controller
     return redirect()->back()->with('error', 'Registro no encontrado.');
     }
 
+
+
+    public function listar(Request $request)
+    {
+        $query = Apoderado::query();
+        
+        // Filtro de búsqueda
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where('apo_dni', 'like', '%' . $search . '%')
+                  ->orWhere('apo_apellidos', 'like', '%' . $search . '%')
+                  ->orWhere('apo_nombres', 'like', '%' . $search . '%')
+                  ->orWhere('apo_direccion', 'like', '%' . $search . '%')
+                  ->orWhere('apo_telefono', 'like', '%' . $search . '%');
+        }
+
+        // Paginación con 10 elementos por página
+        $apoderados = $query->paginate(10);
+
+        // Retornar vista con los registros
+        return view('apoderado.listar', compact('apoderados'));
+    }
 }

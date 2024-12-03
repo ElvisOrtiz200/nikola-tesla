@@ -3,21 +3,23 @@
 
 @section('subcontent')
 
-
+ 
 
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Editar</h2>
 
-    <form id="roledit" action="{{ route('rol.update', $rol->idrol) }}" method="POST">
+    <form id="roledit" action="{{ route('rol.update', $rol->idrol) }}" method="POST" onsubmit="return validarFormulario()">
         @csrf
     @method('PUT') 
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-            <div>
-                <input id="idrol" name="idrol" value="{{ $rol->idrol }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
-            </div>
+          
         
             <div>
-                <input id="nombre_rol" name="nombre_rol" value="{{ $rol->nombre_rol }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <label class="text-gray-700 dark:text-gray-200" for="nombre_rol">Nombre del rol</label>
+                <input id="nombre_rol" name="nombre_rol" value="{{ $rol->nombre_rol }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                pattern="[A-Za-záéíóúÁÉÍÓÚÑñ\s]+" 
+                title="Solo se permiten letras y espacios" 
+                required>
             </div>
         </div>
         
@@ -27,11 +29,31 @@
                 <a href="{{route('rol.editar')}}" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600" >Regresar</a>
             
 
-                <a id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600 cursor-pointer" >Actualizar</a>
+                <button id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600 cursor-pointer" type="submit">Actualizar</button>
             </div>
             
         </div>
     </form>
+    <script>
+        function validarFormulario() {
+            var nombreRol = document.getElementById('nombre_rol').value;
+            
+            // Verificar si el campo está vacío
+            if (!nombreRol) {
+                alert("El nombre del rol es obligatorio.");
+                return false; // Evita que el formulario se envíe
+            }
+    
+            // Verificar si el campo contiene solo letras
+            var regex = /^[A-Za-záéíóúÁÉÍÓÚÑñ\s]+$/;
+            if (!regex.test(nombreRol)) {
+                alert("Solo se permiten letras y espacios en el nombre del rol.");
+                return false; // Evita que el formulario se envíe
+            }
+    
+            return true; // Permite que el formulario se envíe
+        }
+    </script>
 
 
     <div id="confirmModal" class="fixed inset-0  items-center justify-center bg-black bg-opacity-50 hidden">
@@ -112,4 +134,29 @@
     });
 
 </script>
+
+
+
+<script>
+    function validarFormulario() {
+        var nombreRol = document.getElementById('nombre_rol').value;
+        
+        // Verificar si el campo está vacío
+        if (!nombreRol) {
+            alert("El nombre del rol es obligatorio.");
+            return false; // Evita que el formulario se envíe
+        }
+
+        // Verificar si el campo contiene solo letras
+        var regex = /^[A-Za-záéíóúÁÉÍÓÚÑñ\s]+$/;
+        if (!regex.test(nombreRol)) {
+            alert("Solo se permiten letras y espacios en el nombre del rol.");
+            return false; // Evita que el formulario se envíe
+        }
+
+        return true; // Permite que el formulario se envíe
+    }
+</script>
+
+
 @endsection

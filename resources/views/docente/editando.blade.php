@@ -10,44 +10,38 @@
     @method('PUT') 
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-                <div class="relative group">
-                  <button type="button" id="dropdown-button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
-                    <span class="mr-2">DNI del personal</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 -mr-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fill-rule="evenodd" d="M6.293 9.293a1 1 0 011.414 0L10 11.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                  </button>
-                  <div id="dropdown-menu" class="hidden absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
-                    <!-- Search input -->
-                    <input id="dni-input" type="text" class="block w-full px-4 py-2 text-gray-800 border rounded-md border-gray-300 focus:outline-none" 
-           value="{{ $docente->recursoshh->per_dni ?? '' }}" >
-    
-    <!-- Input oculto que guarda el per_id para enviarlo -->
-    <input type="hidden" id="per-id-input" name="per_id" value="{{ $docente->per_id }}">
-                    
-                    <!-- Dropdown content goes here -->
-                    @foreach($rrhh as $docentes)
-                    <a href="javascript:void(0);" 
-                        id="valor" value=""
-                       class="dropdown-items block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md"
-                       data-id="{{ $docentes->per_id }}" data-dni="{{ $docentes->per_dni }}">
-                       {{ $docentes->per_dni }}
-                    </a>
-                    @endforeach
-                  </div>
+                <!-- Select para DNI del personal -->
+                <div>
+                    <label class="text-gray-700 dark:text-gray-200" for="per_id">DNI del personal</label>
+                    <select id="per_id" name="per_id" 
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:ring focus:ring-blue-500 focus:ring-opacity-50">
+                        <option value="" disabled>Seleccione el DNI</option>
+                        @foreach($rrhh as $personal)
+                            <option value="{{ $personal->per_id }}" 
+                                {{ $docente->per_id == $personal->per_id ? 'selected' : '' }}>
+                                {{ $personal->per_dni }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
-        
+            
             <div>
+                <label class="text-gray-700 dark:text-gray-200" for="doc_especialidad">Especialidad</label>
+
                 <input id="doc_especialidad" name="doc_especialidad" value="{{ $docente->doc_especialidad }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
             </div>
 
 
             <div>
+                <label class="text-gray-700 dark:text-gray-200" for="doc_nivel_educativo">Nivel Educativo</label>
+
                 <input id="doc_nivel_educativo" name="doc_nivel_educativo" value="{{ $docente->doc_nivel_educativo }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
             </div>
 
             <div id="date-range-picker" class="flex items-center">
+                <label class="text-gray-700 dark:text-gray-200" for="doc_nivel_educativo">Fecha de Nacimiento</label>
+
                 <div class="relative">
                     <input id="datepicker-individiual" name="doc_fecha_nac" value="{{ $docente->doc_fecha_nac }}" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Fecha de nacimiento">
                 </div>
@@ -55,6 +49,7 @@
             </div>
 
             <div>
+                <label class="text-gray-700 dark:text-gray-200" for="doc_nivel_educativo">Estado</label>
                 <input id="doc_estado" name="doc_estado" value="{{ $docente->doc_estado }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
             </div>
         </div>

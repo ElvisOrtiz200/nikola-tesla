@@ -10,39 +10,22 @@
     @method('DELETE')
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             
-            <div>
-
-                <input id="apo_dni" name="id_grado" value="{{ $grados->id_grado }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" readonly>
-            </div>
         
             <div>
+                <label class="text-gray-700 dark:text-gray-200" for="nombre">Nombre del grado</label>
                 <input id="apo_apellidos" name="nombre" value="{{ $grados->nombre }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
             </div>
 
             <div class="relative group">
-                <button type="button" id="dropdown-button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
-                  <span class="mr-2">DNI del personal</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 -mr-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M6.293 9.293a1 1 0 011.414 0L10 11.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-                <div id="dropdown-menu" class="hidden absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
-                  <!-- Search input -->
-                  <input id="dni-input" type="text" class="block w-full px-4 py-2 text-gray-800 border rounded-md border-gray-300 focus:outline-none" 
-         value="{{ $grados->nivel->nombre ?? '' }}" >
-  
-  <!-- Input oculto que guarda el per_id para enviarlo -->
-  <input type="hidden" id="nivel-id-input" name="id_nivel" value="{{ $grados->nivel->id_nivel ?? '' }}">
-                  
-                  <!-- Dropdown content goes here -->
-                  @foreach($niveles as $nivel)
-            <a href="javascript:void(0);" class="dropdown-item block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer rounded-md"
-               data-id="{{ $nivel->id_nivel }}" data-nombre="{{ $nivel->nombre }}">
-               {{ $nivel->nombre }}
-            </a>
-        @endforeach
-                </div>
-              </div>
+                <!-- Campo de texto con el nombre del nivel educativo, solo lectura -->
+                <label for="nivel_educativo" class="text-gray-700 dark:text-gray-200">Nivel Educativo</label>
+                <input id="nivel_educativo" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300" 
+                       value="{{ $grados->nivel->nombre ?? '' }}" readonly> 
+            
+                <!-- Input oculto que guarda el ID del nivel educativo para enviarlo con el formulario -->
+                <input type="hidden" id="nivel-id-input" name="id_nivel" value="{{ $grados->nivel->id_nivel ?? '' }}">
+            </div>
+            
             
 
 

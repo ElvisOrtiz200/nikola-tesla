@@ -11,65 +11,82 @@ use Illuminate\Support\Facades\Validator as FacadesValidator;
 
 class AuthController extends Controller
 {
-    public function register(Request $request) {
-        $validator = FacadesValidator::make(request()->all(), [
-            'usu_login' => 'required',
-            'password' => 'required',
-            'correo' => 'required',
+    public function register(Request $request)
+{
+    try {
+        // Validar los datos del formulario
+        $validator = FacadesValidator::make($request->all(), [
+            'usu_login' => 'required|unique:auth_usuario,usu_login', // 'usu_login' debe ser único
+            'password' => 'required|min:8', // La contraseña es obligatoria y debe tener al menos 8 caracteres
+            'correo' => 'required|email|unique:auth_usuario,correo', // 'correo' debe ser único y debe ser un correo válido
             'idrol' => 'required',
         ]);
-    
+
+        // Si la validación falla, devolver los errores
         if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            $errorMessages = implode(' ', $validator->errors()->all());
+            return redirect()->route('usuario.crear')
+                ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
         }
-        //dd($request);
-        $user = new Usuario;
-        $user->per_id = request()->per_id;
-        $user->usu_login = request()->usu_login;
-        $user->alu_dni = request()->alu_dni;
-        $user->password = Hash::make(request()->password); // Usando Hash::make para hashear la contraseña
+
+        // Crear el nuevo usuario
+        $user = new Usuario();
+        $user->per_id = $request->per_id;
+        $user->usu_login = $request->usu_login;
+        $user->alu_dni = $request->alu_dni;
+        $user->password = Hash::make($request->password); // Usando Hash::make para hashear la contraseña
         $user->usu_estado = 'A';
-        $user->correo = request()->correo;
-        $user->idrol = request()->idrol;
+        $user->correo = $request->correo;
+        $user->idrol = $request->idrol;
         $user->save();
-    
+
+        // Redirigir con mensaje de éxito
         return redirect()->route('usuario.crear')
-                ->withCookie(cookie('success', 'Usuario registrado con éxito.', 1, '/', null, false, false));
+            ->withCookie(cookie('success', 'Usuario registrado con éxito.', 1, '/', null, false, false));
+
+    } catch (\Exception $e) {
+        // Manejar la excepción y enviar mensaje en cookie
+        return redirect()->route('usuario.crear')
+            ->withCookie(cookie('error', 'Error al registrar. Operación cancelada: ' . $e->getMessage(), 1, '/', null, false, false));
     }
+}
 
     //Function que se ejecuta con método POST
     public function login(Request $request)
-    {
-    $credentials = request(['usu_login', 'password']); 
+{
+    $credentials = $request->only(['usu_login', 'password']); 
 
     $usuario = \App\Models\Usuario::where('usu_login', $credentials['usu_login'])->first();
 
     if (!$usuario) {
         Log::warning('Usuario no encontrado', ['usu_login' => $credentials['usu_login']]);
-        return response()->json(['error' => 'Unauthorized - Usuario no encontrado'], 401);
+        return redirect()->route('dashboard')
+                    ->withCookie(cookie('error', 'Usuario no encontrado.', 1, '/', null, false, false));
+       
     }
 
     if (!Hash::check($credentials['password'], $usuario->password)) { 
         Log::warning('Contraseña incorrecta para el usuario', ['usu_login' => $credentials['usu_login']]);
-        return response()->json(['error' => 'Unauthorized - Contraseña incorrecta'], 401);
+        return redirect()->route('dashboard')
+                    ->withCookie(cookie('error', 'Contraseña incorrecta.', 1, '/', null, false, false));
     }
 
     $token = auth('api')->attempt($credentials); 
-    $cookie = cookie('token', $token, 60); 
-    $cookieName = cookie('user_name', $usuario->usu_login, 60);
-    $cookieRole = cookie('user_role', $usuario->idrol, 60);
-
     if (!$token) {
         Log::error('No se pudo generar el token', [
             'credentials' => $credentials,
             'usuario' => $usuario,
-            'token' => $token,
         ]);
-    } 
-    //dd($cookie, $cookieName, $cookieRole);
-    //redirigimos a la ruta GET donde se muestra el menu.
-    return redirect()->route('dashboard')->withCookies([$cookie, $cookieName, $cookieRole]);
+        return redirect()->back()->withErrors(['general' => 'Error interno. Intenta nuevamente.']);
     }
+
+    $cookie = cookie('token', $token, 60); 
+    $cookieName = cookie('user_name', $usuario->usu_login, 60);
+    $cookieRole = cookie('user_role', $usuario->idrol, 60);
+
+    return redirect()->route('dashboard')->withCookies([$cookie, $cookieName, $cookieRole]);
+}
+
 
     //Function POST para obtener quien es el usuario dado el token activo
     public function me(Request $request)
@@ -119,43 +136,48 @@ class AuthController extends Controller
             'expires_in' => JWTAuth::factory()->getTTL() * 1
         ]);
     }
-
+ 
     public function update(Request $request, $id) {
-        // Validación de los datos
-        $validator = FacadesValidator::make($request->all(), [
-            'per_id' => 'required',
-            'usu_login' => 'required',
-            'password' => 'required',
-
-            'correo' => 'required|email', // Asegúrate de validar que sea un correo
-        ]);
-    
+        try {
+            $request->validate([
+     
+          
+                'usu_login' => ['required', 'unique:auth_usuario,usu_login,'.$id.',usu_id'],
+                'password' => 'required',
+                'correo' => ['required', 'unique:auth_usuario,correo,'.$id.',usu_id'],
+                'idrol' => 'required',
+            ]);
         
-    // dd("hola");
-        // Encontrar el usuario por ID
-        $user = Usuario::findOrFail($id); // Busca el usuario existente
-        $inputPassword = request()->password;
-        // Asignar los nuevos valores
-        $user->per_id = $request->per_id;
-        $user->usu_login = $request->usu_login;
-        
-        if ($request->filled('password')) {
-            // Verificar si la contraseña tiene 60 caracteres
-            if (strlen($request->password) !== 60) {
-                $user->password = Hash::make($request->password); // Hashear la nueva contraseña
-            } else {
-                // Si la contraseña ya tiene 60 caracteres, no se hace nada
-                $user->password = $request->password; // Asignar la contraseña sin hashear
+          
+            $user = Usuario::findOrFail($id);
+            $inputPassword = request()->password;
+            // Asignar los nuevos valores
+            $user->per_id = $request->per_id;
+            $user->usu_login = $request->usu_login;
+            
+            if ($request->filled('password')) {
+                // Verificar si la contraseña tiene 60 caracteres
+                if (strlen($request->password) !== 60) {
+                    $user->password = Hash::make($request->password); // Hashear la nueva contraseña
+                } else {
+                    // Si la contraseña ya tiene 60 caracteres, no se hace nada
+                    $user->password = $request->password; // Asignar la contraseña sin hashear
+                }
             }
-        }
+            
+            $user->usu_estado = 'A';
+            $user->correo = $request->correo;
+            $user->save();
         
-        $user->usu_estado = 'A';
-        $user->correo = $request->correo;
-        $user->save();
-    
-        // Redirigir con mensaje de éxito
-        return redirect()->route('usuario.show') // Cambia a la ruta que desees
-        ->withCookie(cookie('success', 'Usuario actualizado con éxito.', 1, '/', null, false, false));
+            // Redirigir con mensaje de éxito
+            return redirect()->route('usuario.show') // Cambia a la ruta que desees
+            ->withCookie(cookie('success', 'Usuario actualizado con éxito.', 1, '/', null, false, false));
+        } catch (\Exception $e) {
+            return redirect()->route('usuario.show', ['id' => $id])
+            ->withCookie(cookie('error', 'Error al actualizar. Operación cancelada: ' . $e->getMessage(), 1, '/', null, false, false));
+        }
+
+      
     }
     
 

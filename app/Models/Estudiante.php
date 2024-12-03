@@ -26,6 +26,11 @@ class Estudiante extends Model
         return $this->hasMany(EstudianteCurso::class);
     }
 
+    public function apoderado()
+    {
+        return $this->belongsTo(Apoderado::class, 'apo_dni', 'apo_dni');
+    }
+
     public function notas()
     {
         return $this->hasMany(AcadNota::class, 'alu_dni', 'alu_dni');

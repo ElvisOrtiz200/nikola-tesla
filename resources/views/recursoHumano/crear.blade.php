@@ -19,83 +19,170 @@
     </div>
 </div>
 @endif
+ 
 
+
+@if (request()->cookie('error'))
+<div id="alert" class="fixed top-4 right-4 z-50 flex w-full max-w-sm overflow-hidden bg-red-500 rounded-lg shadow-md dark:bg-red-700" style="display: flex;">
+    <div class="flex items-center justify-center w-12 bg-red-600">
+        <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 3.33331C10.8 3.33331 3.33337 10.8 3.33337 20C3.33337 29.2 10.8 36.6666 20 36.6666C29.2 36.6666 36.6667 29.2 36.6667 20C36.6667 10.8 29.2 3.33331 20 3.33331ZM16.6667 28.3333L8.33337 20L10.6834 17.65L16.6667 23.6166L29.3167 10.9666L31.6667 13.3333L16.6667 28.3333Z" />
+        </svg>
+    </div>
+    <div class="px-4 py-2 -mx-3">
+        <div class="mx-3">
+            <span class="font-semibold text-white">¡Error!</span>
+            <p class="text-sm text-white">{{ request()->cookie('error') }}</p>
+        </div>
+    </div>
+</div>
+@endif 
 
 
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Registrar recurso humano</h2>
     {{-- {{route('apoderado.store')}} --}}
-    <form id="rolCrear" action="{{route('recursoshh.store')}}" method="POST">
+    <form id="rolCrear" action="{{route('recursoshh.store')}}" method="POST" onsubmit="return validarFormulario()">
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="per_apellidos">Apellidos</label>
                 <input id="per_apellidos" name="per_apellidos" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorApellidos" class="text-red-500 text-sm hidden mt-1"></div>
             </div>
-        
+            
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="per_nombres">Nombres</label>
                 <input id="per_nombres" name="per_nombres" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorNombres" class="text-red-500 text-sm hidden mt-1"></div>
             </div>
-        
+            
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="per_cargo">Cargo</label>
                 <input id="per_cargo" name="per_cargo" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorCargo" class="text-red-500 text-sm hidden mt-1"></div>
             </div>
             
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="per_dni">DNI</label>
                 <input id="per_dni" name="per_dni" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorDni" class="text-red-500 text-sm hidden mt-1"></div>
             </div>
-
+            
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="per_telefono">Teléfono</label>
                 <input id="per_telefono" name="per_telefono" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorTelefono" class="text-red-500 text-sm hidden mt-1"></div>
             </div>
-
+            
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="per_direccion">Dirección</label>
                 <input id="per_direccion" name="per_direccion" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorDireccion" class="text-red-500 text-sm hidden mt-1"></div>
             </div>
-
-
- 
+            
             <div id="date-range-picker" class="flex items-center">
+                <label class="text-gray-700 dark:text-gray-200" for="">Fecha de contrato</label>
+
                 <div class="relative">
-                    <input id="datepicker-range-start" name="per_fecha_inicio"  type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Fecha de inicio">
+                    <input id="datepicker-range-start" name="per_fecha_inicio" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Fecha de inicio">
+                    <div id="errorFechaInicio" class="text-red-500 text-sm hidden mt-1"></div>
                 </div>
                 <span class="mx-4 text-gray-500">a</span>
                 <div class="relative">
-                    <input id="datepicker-range-end" name="per_fecha_fin"  type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Fecha fin">
+                    <input id="datepicker-range-end" name="per_fecha_fin" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Fecha fin">
+                    <div id="errorFechaFin" class="text-red-500 text-sm hidden mt-1"></div>
                 </div>
             </div>
             
-            {{-- 
-            <div>
-                <label class="text-gray-700 dark:text-gray-200" for="apo_dni">DNI</label>
-                <input id="apo_dni" name="apo_dni" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
-
-            <div>
-                <label class="text-gray-700 dark:text-gray-200" for="apo_apellidos">Apellidos</label>
-                <input id="apo_apellidos" name="apo_apellidos" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
-
-            <div>
-                <label class="text-gray-700 dark:text-gray-200" for="apo_nombres">Nombres</label>
-                <input id="apo_nombres" name="apo_nombres" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
-
-           <div>
-                <label class="text-gray-700 dark:text-gray-200" for="apo_direccion">Dirección</label>
-                <input id="apo_direccion" name="apo_direccion" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
-
-            <div>
-                <label class="text-gray-700 dark:text-gray-200" for="apo_telefono">Teléfono</label>
-                <input id="apo_telefono" name="apo_telefono" type="number" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div> --}}
-
             
+            <script>
+                function validarFormulario() {
+                    let valid = true;
+
+        // Limpiar mensajes de error anteriores
+                    const errorDivs = document.querySelectorAll('.text-red-500');
+                    errorDivs.forEach(div => div.classList.add('hidden'));
+
+                    // Validación de apellidos
+                    const apellidos = document.getElementById('per_apellidos').value;
+                    const regexLetras = /^[A-Za-záéíóúÁÉÍÓÚÑñ\s]+$/;
+                    if (!apellidos || !regexLetras.test(apellidos)) {
+                        document.getElementById('errorApellidos').textContent = "Los apellidos solo pueden contener letras y espacios.";
+                        document.getElementById('errorApellidos').classList.remove('hidden');
+                        valid = false;
+                    }
+
+                    // Validación de nombres
+                    const nombres = document.getElementById('per_nombres').value;
+                    if (!nombres || !regexLetras.test(nombres)) {
+                        document.getElementById('errorNombres').textContent = "Los nombres solo pueden contener letras y espacios.";
+                        document.getElementById('errorNombres').classList.remove('hidden');
+                        valid = false;
+                    }
+
+                    // Validación de cargo
+                    const cargo = document.getElementById('per_cargo').value;
+                    if (!cargo) {
+                        document.getElementById('errorCargo').textContent = "El cargo es obligatorio.";
+                        document.getElementById('errorCargo').classList.remove('hidden');
+                        valid = false;
+                    }
+
+                    // Validación de DNI
+                    const dni = document.getElementById('per_dni').value;
+                    if (!dni || dni.length !== 8 || isNaN(dni)) {
+                        document.getElementById('errorDni').textContent = "El DNI debe ser un número de 8 dígitos.";
+                        document.getElementById('errorDni').classList.remove('hidden');
+                        valid = false;
+                    }
+
+                    // Validación de teléfono
+                    const telefono = document.getElementById('per_telefono').value;
+                    if (!telefono || telefono.length !== 9 || isNaN(telefono)) {
+                        document.getElementById('errorTelefono').textContent = "El teléfono debe ser un número de 9 dígitos.";
+                        document.getElementById('errorTelefono').classList.remove('hidden');
+                        valid = false;
+                    }
+
+                    // Validación de dirección
+                    const direccion = document.getElementById('per_direccion').value;
+                    if (!direccion) {
+                        document.getElementById('errorDireccion').textContent = "La dirección es obligatoria.";
+                        document.getElementById('errorDireccion').classList.remove('hidden');
+                        valid = false;
+                    }
+
+                    // Validación de fechas
+                    const fechaInicio = document.getElementById('datepicker-range-start').value;
+                    const fechaFin = document.getElementById('datepicker-range-end').value;
+
+                    if (!fechaInicio) {
+                        document.getElementById('errorFechaInicio').textContent = "La fecha de inicio es obligatoria.";
+                        document.getElementById('errorFechaInicio').classList.remove('hidden');
+                        valid = false;
+                    }
+
+                    if (!fechaFin) {
+                        document.getElementById('errorFechaFin').textContent = "La fecha de fin es obligatoria.";
+                        document.getElementById('errorFechaFin').classList.remove('hidden');
+                        valid = false;
+                    }
+
+                    // Validar que fechaInicio sea anterior a fechaFin
+                    if (fechaInicio && fechaFin) {
+                        const fechaInicioObj = new Date(fechaInicio);
+                        const fechaFinObj = new Date(fechaFin);
+
+                        if (fechaInicioObj >= fechaFinObj) {
+                            document.getElementById('errorFechaInicio').textContent = "La fecha de inicio debe ser anterior a la fecha de fin.";
+                            document.getElementById('errorFechaInicio').classList.remove('hidden');
+                            valid = false;
+                        }
+                    }
+
+                    return valid;
+                }
+            </script>
 
         </div>
 
@@ -167,13 +254,11 @@
 setTimeout(() => {
     const alert = document.getElementById('alert');
     if (alert) {
-        // Ocultar el mensaje
         alert.style.display = 'none';
-        
-        // Eliminar la cookie 'success' después de ocultar el mensaje
-        deleteCookie('success');
+        deleteCookie('success'); // Borrar cookie de éxito
+        deleteCookie('error');   // Borrar cookie de error
     }
-}, 2000);
+}, 3000);
 </script>
 
 <script>
@@ -182,19 +267,17 @@ setTimeout(() => {
     const cancelButton = document.getElementById('cancelButton');
     const confirmButton = document.getElementById('confirmButton');
     
-    
-     // Lógica cuando se confirma el registro
-     confirmButton.addEventListener('click', () => {
-        // Aquí puedes proceder con el registro, por ejemplo, enviando el formulario
+    registerButton.addEventListener('click', function () {
+    if (validarFormulario()) {     
+        confirmModal.classList.remove('hidden');    
+    }
+    });
+
+    confirmButton.addEventListener('click', () => {
+
         document.getElementById('rolCrear').submit();
     });
 
-    // Mostrar el modal cuando se hace clic en "Registrar"
-    registerButton.addEventListener('click', () => {
-        confirmModal.classList.remove('hidden');
-    });
-
-    // Ocultar el modal cuando se hace clic en "Cancelar"
     cancelButton.addEventListener('click', () => {
         confirmModal.classList.add('hidden');
     });

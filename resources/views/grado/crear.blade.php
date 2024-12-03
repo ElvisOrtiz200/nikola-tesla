@@ -22,50 +22,74 @@
 
 
 
-<section class="max-w-4xl p-6 mx-auto bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
-    <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Registrar grado</h2>
+<div class="container mx-auto px-4 sm:px-8 max-w-3xl">
+    <div class="py-8">
+        <h2 class="text-2xl font-semibold leading-tight text-gray-700 dark:text-gray-200 mb-6">Registrar Grado</h2>
+        
+        <form id="rolCrear" action="{{ route('grado.store') }}" method="POST" onsubmit="return validarFormulario()">
+            @csrf
+            <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+                <!-- Campo para Nombre del Grado -->
+                <div>
+                    <label class="text-gray-700 dark:text-gray-200" for="nombre">Nombre del grado</label>
+                    <input id="nombre" name="nombre" type="text"
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                        <div id="errorNombre" class="mt-2 text-sm text-red-500 hidden"></div>
+                </div>
 
-    <form id="rolCrear" action="{{route('grado.store')}}" method="POST">
-        <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-            <div>
-                <label class="text-gray-700 dark:text-gray-200" for="nombre">Nombre del grado</label>
-                <input id="nombre" name="nombre" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <script>
+                    function validarFormulario() {
+                        var valid = true;
+                
+                        // Limpiar mensaje de error previo
+                        var errorDiv = document.getElementById('errorNombre');
+                        errorDiv.classList.add('hidden');
+                        errorDiv.textContent = '';
+                
+                        // Validación del campo 'nombre' (solo letras y espacios)
+                        var nombre = document.getElementById('nombre').value;
+                        var regexNombre = /^[A-Za-záéíóúÁÉÍÓÚÑñ0-9\s]+$/;
+                        if (!nombre || !regexNombre.test(nombre)) {
+                            errorDiv.textContent = "El nombre solo puede contener letras y espacios.";
+                            errorDiv.classList.remove('hidden');
+                            valid = false;
+                        }
+                
+                        return valid;
+                    }
+                </script>
+                
+                <!-- Combobox de Niveles -->
+                <div>
+                    <label class="text-gray-700 dark:text-gray-200" for="id_nivel">Nivel</label>
+                    <select id="id_nivel" name="id_nivel"
+                        class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                      
+                        @foreach ($niveles as $nivel)
+                            <option value="{{ $nivel->id_nivel }}">{{ $nivel->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
-            <div class="relative group">
-                <button type="button" id="dropdown-button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
-                  <span class="mr-2">Nivel educativo</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 -mr-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M6.293 9.293a1 1 0 011.414 0L10 11.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-                <div id="dropdown-menu" class="hidden absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
-                  <!-- Search input -->
-                  <input id="search-input" name="" class="block w-full px-4 py-2 text-gray-800 border rounded-md border-gray-300 focus:outline-none" type="text" placeholder="Buscar DNI" autocomplete="off" >
-
-                  <input id="search-inputQUESEENVIA" name="id_nivel" class="block w-full px-4 py-2 text-gray-800 border rounded-md border-gray-300 focus:outline-none" type="text" placeholder="Buscar DNI" autocomplete="off" style="display: none">
-                  
-                  <!-- Dropdown content goes here -->
-                  @foreach($nivel as $nivelito)
-                  <a href="javascript:void(0);" 
-                      id="valor"
-                     class="dropdown-items block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md"
-                     data-id="{{ $nivelito->id_nivel }}" data-dni="{{ $nivelito->nombre }}">
-                     {{ $nivelito->nombre }}
-                  </a>
-                  @endforeach
-                </div>
-              </div>
-
-           
-        </div>
-
-        <div class="flex justify-end mt-6">
-            <button id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600" type="button">Registrar</button>
-        </div>
-        
-    </form>
-</section>
+            <!-- Botón de Enviar -->
+            <div class="flex justify-end mt-6">
+                <button id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
+                    type="button">Registrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    // Activar Select2 para el combobox
+    document.addEventListener("DOMContentLoaded", function () {
+        $('#id_nivel').select2({
+            placeholder: "Buscar nivel...",
+            allowClear: true,
+            width: '100%' // Ajustar al ancho del contenedor
+        });
+    });
+</script>
 
 <div id="confirmModal" class="fixed inset-0  items-center justify-center bg-black bg-opacity-50 hidden">
     
@@ -123,46 +147,38 @@
     // Eliminar la cookie 'success' con los parámetros correctos
     document.cookie = name + '=; Max-Age=0; path=/; domain=' + window.location.hostname + ';';
 }
-
-// Función para ocultar el mensaje y eliminar la cookie
 setTimeout(() => {
     const alert = document.getElementById('alert');
     if (alert) {
-        // Ocultar el mensaje
         alert.style.display = 'none';
-        
-        // Eliminar la cookie 'success' después de ocultar el mensaje
-        deleteCookie('success');
+        deleteCookie('success'); // Borrar cookie de éxito
+        deleteCookie('error');   // Borrar cookie de error
     }
-}, 2000);
+}, 3000);
 </script>
 
 <script>
-  
     const registerButton = document.getElementById('registerButton');
     const confirmModal = document.getElementById('confirmModal');
     const cancelButton = document.getElementById('cancelButton');
     const confirmButton = document.getElementById('confirmButton');
     
-    
-     // Lógica cuando se confirma el registro
-     confirmButton.addEventListener('click', () => {
-        // Aquí puedes proceder con el registro, por ejemplo, enviando el formulario
+    registerButton.addEventListener('click', function () {
+    if (validarFormulario()) {     
+        confirmModal.classList.remove('hidden');    
+    }
+    });
+
+    confirmButton.addEventListener('click', () => {
+
         document.getElementById('rolCrear').submit();
     });
 
-    // Mostrar el modal cuando se hace clic en "Registrar"
-    registerButton.addEventListener('click', () => {
-        confirmModal.classList.remove('hidden');
-    });
-
-    // Ocultar el modal cuando se hace clic en "Cancelar"
     cancelButton.addEventListener('click', () => {
         confirmModal.classList.add('hidden');
     });
 
 </script>
-
 
 <script>
       const inputENVIADO = document.getElementById('search-inputQUESEENVIA');

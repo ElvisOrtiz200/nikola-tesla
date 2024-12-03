@@ -14,37 +14,97 @@
     @method('PUT') 
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             
+           
+            
+            @if ($estudiantes)
+            <!-- Mostrar el select de Estudiantes cuando per_id sea nulo -->
             <div>
-                <input id="usu_id" name="usu_id" value="{{ $usuario->usu_id }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" disabled>
+                <label class="text-gray-700 dark:text-gray-200">Seleccionar Estudiante</label>
+                <select id="alu_dni" name="alu_dni" class="select2 block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    <option value="{{$estudiantes->alu_dni}}" selected>{{$estudiantes->alu_dni}} </option>
+                    @foreach ($todosLosEstudiantes as $estudiante)
+                        @if ($estudiante->alu_dni != $estudiantes->alu_dni)
+                             <option value="{{ $estudiante->alu_dni }}" {{ old('alu_dni') == $estudiante->alu_dni ? 'selected' : '' }}>
+                             {{ $estudiante->alu_dni  }}
+                        </option>
+                        @endif
+                    @endforeach
+                </select>
             </div>
-            <div>
-                <input id="per_id" name="per_id" value="{{ $usuario->per_id }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+        @else
+            <!-- Mostrar el select de Personal cuando per_id no sea nulo -->
+            <div id="personal_id" class="mb-6">
+                <label for="per_id" class="block text-lg font-semibold text-gray-700">Seleccionar Personal</label>
+                <select id="per_id" name="per_id" class="select2 block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    <!-- Mostrar la opción seleccionada, sin repetirla en la lista -->
+                    <option value="{{ $personal->per_id }}" selected>{{ $personal->per_dni }}</option>
+            
+                    <!-- Mostrar el resto de los personales sin repetir el seleccionado -->
+                    @foreach ($todosLosPersonales as $person)
+                        @if ($person->per_id != $personal->per_id)
+                            <option value="{{ $person->per_id }}" {{ old('per_id') == $person->per_id ? 'selected' : '' }}>
+                                {{ $person->per_dni }}
+                            </option>
+                        @endif
+                    @endforeach
+                </select>
             </div>
-        
+            
+            
+        @endif
             <div>
+                <label class="text-gray-700 dark:text-gray-200" >Nombre de usuario</label>
                 <input id="usu_login" name="usu_login" value="{{ $usuario->usu_login }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
             </div>
 
             <div>
-                <input id="password" name="password" value="{{ $usuario->password }}" type="text"
-    class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
-    style="user-select: none;" 
-    onmousedown="return false;" 
-    onselectstart="return false;" 
-    oncopy="return false;" 
-    oncut="return false;" 
-    onpaste="return false;" 
-    oncontextmenu="return false;"
-    ondblclick="return false;">
-                <button id="editPasswordBtn" type="button" class="mt-2 bg-orange-200 rounded-sm">Editar contraseña</button>
+                <label class="text-gray-700 dark:text-gray-200" >Contraseña</label>
+
+                            <input id="password" name="password" value="{{ $usuario->password }}" type="text"
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                style="user-select: none;" 
+                onmousedown="return false;" 
+                onselectstart="return false;" 
+                oncopy="return false;" 
+                oncut="return false;" 
+                onpaste="return false;" 
+                oncontextmenu="return false;"
+                ondblclick="return false;">
+                <button id="editPasswordBtn" type="button" 
+                class="mt-2 px-4 py-2 text-white bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 
+                    rounded-lg shadow-md hover:from-orange-500 hover:via-orange-600 hover:to-orange-700 
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                Editar contraseña
+            </button>
             </div>
 
             <div>
+                <label class="text-gray-700 dark:text-gray-200" >Estado</label>
+
                 <input id="usu_estado" name="usu_estado" value="{{ $usuario->usu_estado }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
             </div>
 
             <div>
+                <label class="text-gray-700 dark:text-gray-200" >Correo</label>
+
                 <input id="correo" name="correo" value="{{ $usuario->correo }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+            </div>
+
+            <div id="idrol" class="mb-6">
+                <label for="idrol" class="block text-lg font-semibold text-gray-700">Seleccionar Rol</label>
+                <select id="idrol" name="idrol" class="select2 block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    <!-- Mostrar la opción seleccionada, sin repetirla en la lista -->
+                    <option value="{{ $rol->idrol }}" selected>{{ $rol->nombre_rol }}</option>
+            
+                    <!-- Mostrar el resto de los personales sin repetir el seleccionado -->
+                    @foreach ($roles as $person)
+                        @if ($person->idrol != $rol->idrol)
+                            <option value="{{ $person->idrol }}" {{ old('idrol') == $person->idrol ? 'selected' : '' }}>
+                                {{ $person->nombre_rol }}
+                            </option>
+                        @endif
+                    @endforeach
+                </select>
             </div>
         </div>
         

@@ -20,28 +20,139 @@
 </div>
 @endif
 
+@if (request()->cookie('error'))
+<div id="alert" class="fixed top-4 right-4 z-50 flex w-full max-w-sm overflow-hidden bg-red-500 rounded-lg shadow-md dark:bg-red-700" style="display: flex;">
+    <div class="flex items-center justify-center w-12 bg-red-600">
+        <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 3.33331C10.8 3.33331 3.33337 10.8 3.33337 20C3.33337 29.2 10.8 36.6666 20 36.6666C29.2 36.6666 36.6667 29.2 36.6667 20C36.6667 10.8 29.2 3.33331 20 3.33331ZM16.6667 28.3333L8.33337 20L10.6834 17.65L16.6667 23.6166L29.3167 10.9666L31.6667 13.3333L16.6667 28.3333Z" />
+        </svg>
+    </div>
+    <div class="px-4 py-2 -mx-3">
+        <div class="mx-3">
+            <span class="font-semibold text-white">¡Error!</span>
+            <p class="text-sm text-white">{{ request()->cookie('error') }}</p>
+        </div>
+    </div>
+</div>
+@endif 
  
 
-<section class="max-w-4xl p-6 mx-auto bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
-    <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Registrar bimestre</h2>
+        <section class="max-w-4xl p-6 mx-auto bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
+            <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Registrar bimestre</h2>
 
-    <form id="rolCrear" action="{{route('bimestre.store')}}" method="POST">
-        <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-            <div>
-                <label class="text-gray-700 dark:text-gray-200" for="bim_sigla">Bimestre sigla</label>
-                <input id="bim_sigla" name="bim_sigla" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
+            <form id="rolCrear" action="{{ route('bimestre.store') }}" method="POST" onsubmit="return validarFormulario()">
+                @csrf
 
-            <div>
-                <label class="text-gray-700 dark:text-gray-200" for="bim_descripcion">Bimestre descripción</label>
-                <input id="bim_descripcion" name="bim_descripcion" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
+                <div class="grid grid-cols-1 gap-6 mt-4">
+                    <!-- Campo Bim Sigla -->
+                <!-- Campo Bim Sigla -->
+        <div>
+            <label for="bim_sigla" class="text-gray-700">Bimestre Sigla</label>
+            <input id="bim_sigla" name="bim_sigla" type="text" value="{{ old('bim_sigla') }}"
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <div id="error_bim_sigla" class="text-red-500 text-sm hidden mt-1"></div>
         </div>
 
+        <!-- Campo Bim Descripción -->
+        <div>
+            <label for="bim_descripcion" class="text-gray-700">Bimestre Descripción</label>
+            <input id="bim_descripcion" name="bim_descripcion" type="text" value="{{ old('bim_descripcion') }}"
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <div id="error_bim_descripcion" class="text-red-500 text-sm hidden mt-1"></div>
+        </div>
+
+        <!-- Campo Año -->
+        <div>
+            <label for="anio" class="text-gray-700">Año</label>
+            <input id="anio" name="anio" type="text" value="{{ old('anio') }}"
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <div id="error_anio" class="text-red-500 text-sm hidden mt-1"></div>
+        </div>
+
+        <!-- Campo Fecha Inicio -->
+        <div>
+            <label for="fecha_inicio" class="text-gray-700">Fecha Inicio</label>
+            <input id="fecha_inicio" name="fecha_inicio" type="date" value="{{ old('fecha_inicio') }}"
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <div id="error_fecha_inicio" class="text-red-500 text-sm hidden mt-1"></div>
+        </div>
+
+        <!-- Campo Fecha Fin -->
+        <div>
+            <label for="fecha_fin" class="text-gray-700">Fecha Fin</label>
+            <input id="fecha_fin" name="fecha_fin" type="date" value="{{ old('fecha_fin') }}"
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <div id="error_fecha_fin" class="text-red-500 text-sm hidden mt-1"></div>
+        </div>
+
+        </div>
+        
+        <script>
+            function validarFormulario() {
+                let valid = true;
+        
+                // Limpiar mensajes de error previos
+                const errorDivs = document.querySelectorAll('.text-red-500');
+                errorDivs.forEach(div => div.classList.add('hidden'));
+        
+                // Validación de Bimestre Sigla (letras, longitud entre 1 y 3)
+                const bimSigla = document.getElementById('bim_sigla').value.trim();
+                if (!bimSigla || !/^[A-Za-z]{1,3}$/.test(bimSigla)) {
+                    mostrarError('bim_sigla', 'La sigla debe contener entre 1 y 3 letras.');
+                    valid = false;
+                }
+        
+                // Validación de Bimestre Descripción (no vacío)
+                const bimDescripcion = document.getElementById('bim_descripcion').value.trim();
+                if (!bimDescripcion) {
+                    mostrarError('bim_descripcion', 'La descripción no puede estar vacía.');
+                    valid = false;
+                } else if (bimDescripcion.length > 15) {
+                    mostrarError('bim_descripcion', 'La descripción no debe exceder los 15 caracteres.');
+                    valid = false;
+                }
+
+        
+                // Validación de Año (número de 4 dígitos, debe ser válido)
+                const anio = document.getElementById('anio').value.trim();
+                if (!anio || !/^\d{4}$/.test(anio) || parseInt(anio) < 1900 || parseInt(anio) > new Date().getFullYear() + 1) {
+                    mostrarError('anio', 'El año debe ser un número de 4 dígitos válido.');
+                    valid = false;
+                }
+        
+                // Validación de Fecha Inicio (no vacío y válida)
+                const fechaInicio = document.getElementById('fecha_inicio').value;
+                if (!fechaInicio || isNaN(new Date(fechaInicio).getTime())) {
+                    mostrarError('fecha_inicio', 'La fecha de inicio es inválida.');
+                    valid = false;
+                }
+        
+                // Validación de Fecha Fin (no vacío, válida, y posterior a Fecha Inicio)
+                const fechaFin = document.getElementById('fecha_fin').value;
+                if (!fechaFin || isNaN(new Date(fechaFin).getTime())) {
+                    mostrarError('fecha_fin', 'La fecha de fin es inválida.');
+                    valid = false;
+                } else if (fechaInicio && new Date(fechaFin) <= new Date(fechaInicio)) {
+                    mostrarError('fecha_fin', 'La fecha de fin debe ser posterior a la fecha de inicio.');
+                    valid = false;
+                }
+        
+                return valid;
+            }
+        
+            function mostrarError(campoId, mensaje) {
+                const errorDiv = document.getElementById(`error_${campoId}`);
+                if (errorDiv) {
+                    errorDiv.textContent = mensaje;
+                    errorDiv.classList.remove('hidden');
+                }
+            }
+        </script>
+        
+        <!-- Botón de registrar -->
         <div class="flex justify-end mt-6">
             <button id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600" type="button">Registrar</button>
         </div>
-        
     </form>
 </section>
 
@@ -106,13 +217,11 @@
 setTimeout(() => {
     const alert = document.getElementById('alert');
     if (alert) {
-        // Ocultar el mensaje
         alert.style.display = 'none';
-        
-        // Eliminar la cookie 'success' después de ocultar el mensaje
-        deleteCookie('success');
+        deleteCookie('success'); // Borrar cookie de éxito
+        deleteCookie('error');   // Borrar cookie de error
     }
-}, 2000);
+}, 3000);
 </script>
 
 <script>
@@ -121,19 +230,17 @@ setTimeout(() => {
     const cancelButton = document.getElementById('cancelButton');
     const confirmButton = document.getElementById('confirmButton');
     
-    
-     // Lógica cuando se confirma el registro
-     confirmButton.addEventListener('click', () => {
-        // Aquí puedes proceder con el registro, por ejemplo, enviando el formulario
+    registerButton.addEventListener('click', function () {
+    if (validarFormulario()) {     
+        confirmModal.classList.remove('hidden');    
+    }
+    });
+
+    confirmButton.addEventListener('click', () => {
+
         document.getElementById('rolCrear').submit();
     });
 
-    // Mostrar el modal cuando se hace clic en "Registrar"
-    registerButton.addEventListener('click', () => {
-        confirmModal.classList.remove('hidden');
-    });
-
-    // Ocultar el modal cuando se hace clic en "Cancelar"
     cancelButton.addEventListener('click', () => {
         confirmModal.classList.add('hidden');
     });

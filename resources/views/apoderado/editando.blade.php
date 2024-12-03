@@ -1,37 +1,100 @@
 @extends('apoderado.index')
 
-@section('subcontent')
+@section('subcontent') 
 
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Editar</h2>
 
-    <form id="roledit" action="{{ route('apoderado.update', $apoderado->apo_dni) }}" method="POST">
+    <form id="roledit" action="{{ route('apoderado.update', $apoderado->apo_dni) }}" method="POST" onsubmit="return validarFormulario()">
         @csrf
     @method('PUT') 
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             <div>
-                <input id="apo_dni" name="apo_dni" value="{{ $apoderado->apo_dni }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" readonly>
+                <label class="text-gray-700 dark:text-gray-200" >DNI Apoderado</label>
+                <input id="apo_dni" name="apo_dni" value="{{ $apoderado->apo_dni }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" >
+                <div id="errorDni" class="text-red-500 text-sm hidden mt-1"></div>
             </div>
         
             <div>
+                <label class="text-gray-700 dark:text-gray-200" >Apellidos</label>
                 <input id="apo_apellidos" name="apo_apellidos" value="{{ $apoderado->apo_apellidos }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorApellidos" class="text-red-500 text-sm hidden mt-1"></div>
             </div>
 
-
+ 
             <div>
+                <label class="text-gray-700 dark:text-gray-200" >Nombres</label>
                 <input id="apo_nombres" name="apo_nombres" value="{{ $apoderado->apo_nombres }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorNombres" class="text-red-500 text-sm hidden mt-1"></div>
             </div>
 
             <div>
+                <label class="text-gray-700 dark:text-gray-200" >Dirección</label>
                 <input id="apo_direccion" name="apo_direccion" value="{{ $apoderado->apo_direccion }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorDireccion" class="text-red-500 text-sm hidden mt-1"></div>
             </div>
 
             <div>
+                <label class="text-gray-700 dark:text-gray-200" >Teléfono</label>
                 <input id="apo_telefono" name="apo_telefono" value="{{ $apoderado->apo_telefono }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorTelefono" class="text-red-500 text-sm hidden mt-1"></div>
             </div>
         </div>
         
-
+        <script>
+            function validarFormulario() {
+                var valid = true;
+                
+                // Limpiar mensajes de error anteriores
+                var errorDivs = document.querySelectorAll('.text-red-500');
+                errorDivs.forEach(function(div) {
+                    div.classList.add('hidden');
+                });
+                
+                // Validación de DNI (solo números, longitud de 8 dígitos)
+                var apoDni = document.getElementById('apo_dni').value;
+                if (!apoDni || apoDni.length !== 8 || isNaN(apoDni)) {
+                    document.getElementById('errorDni').textContent = "El DNI debe ser un número de 8 dígitos.";
+                    document.getElementById('errorDni').classList.remove('hidden');
+                    valid = false;
+                }
+    
+                // Validación de Apellidos (solo letras y espacios)
+                var apoApellidos = document.getElementById('apo_apellidos').value;
+                var regexApellidos = /^[A-Za-záéíóúÁÉÍÓÚÑñ\s]+$/;
+                if (!apoApellidos || !regexApellidos.test(apoApellidos)) {
+                    document.getElementById('errorApellidos').textContent = "Los apellidos solo pueden contener letras y espacios.";
+                    document.getElementById('errorApellidos').classList.remove('hidden');
+                    valid = false;
+                }
+    
+                // Validación de Nombres (solo letras y espacios)
+                var apoNombres = document.getElementById('apo_nombres').value;
+                if (!apoNombres || !regexApellidos.test(apoNombres)) {
+                    document.getElementById('errorNombres').textContent = "Los nombres solo pueden contener letras y espacios.";
+                    document.getElementById('errorNombres').classList.remove('hidden');
+                    valid = false;
+                }
+    
+                // Validación de Dirección (campo obligatorio)
+                var apoDireccion = document.getElementById('apo_direccion').value;
+                if (!apoDireccion) {
+                    document.getElementById('errorDireccion').textContent = "La dirección es obligatoria.";
+                    document.getElementById('errorDireccion').classList.remove('hidden');
+                    valid = false;
+                }
+    
+                // Validación de Teléfono (solo números, longitud de 9 dígitos)
+                var apoTelefono = document.getElementById('apo_telefono').value;
+                if (!apoTelefono || apoTelefono.length !== 9 || isNaN(apoTelefono)) {
+                    document.getElementById('errorTelefono').textContent = "El teléfono debe ser un número de 9 dígitos.";
+                    document.getElementById('errorTelefono').classList.remove('hidden');
+                    valid = false;
+                }
+    
+                return valid;
+            }
+        </script>
         <div class="flex justify-end mt-6">
             <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
                 <a href="{{route('apoderado.show')}}" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600" >Regresar</a>

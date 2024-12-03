@@ -22,10 +22,12 @@ class NivelController extends Controller
         //
         try {
             $validator = FacadesValidator::make(request()->all(), [
-                'nombre' => 'required',
+                'nombre' => 'required|unique:acad_nivel,nombre',
             ]);
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                $errorMessages = implode(' ', $validator->errors()->all());
+                return redirect()->route('nivel.create')
+                    ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
             }
 
             $nivel = new Nivel();
@@ -64,11 +66,17 @@ class NivelController extends Controller
 
         
         $validator = FacadesValidator::make(request()->all(), [
-            'nombre' => 'required',
+            'nombre' => 'required|unique:acad_nivel,nombre,' . $id . ',id_nivel',
         ]);
 
+        if ($validator->fails()) {
+            $errorMessages = implode(' ', $validator->errors()->all());
+            return redirect()->route('nivel.show', $id) // Usamos 'edit' en lugar de 'create'
+                ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
+        }
+
         $nivel = Nivel::findOrFail($id); 
-        $nivel->id_nivel = $request->id_nivel;
+        $nivel->id_nivel = $id;
         $nivel->nombre = request()->nombre;
         $nivel->save();
     
@@ -78,10 +86,11 @@ class NivelController extends Controller
 
 
     public function delete(Request $request){
+        
         $query = Nivel::query();
 
         if ($request->has('search') && $request->search != '') {
-            $query->where('id_nivel', 'like', '%' . $request->search . '%');
+            $query->where('nombre', 'like', '%' . $request->search . '%');
         }
 
         $apoderado = $query->paginate(4); // Cambia esto para paginación
@@ -107,6 +116,20 @@ class NivelController extends Controller
         ->withCookie(cookie('success', 'Nivel eliminado con éxito.', 1, '/', null, false, false));
     }
     return redirect()->back()->with('error', 'Registro no encontrado.');
+    }
+
+
+    public function listar(Request $request)
+    {
+        // Obtener el término de búsqueda si existe
+        $search = $request->get('search', '');
+
+        // Filtrar los niveles según el término de búsqueda
+        $niveles = Nivel::when($search, function ($query, $search) {
+            return $query->where('nombre', 'LIKE', "%{$search}%");
+        })->paginate(10); // Paginación
+
+        return view('nivel.listar', compact('niveles', 'search'));
     }
 
 }

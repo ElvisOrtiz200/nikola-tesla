@@ -21,4 +21,8 @@ class Docente extends Model
     public function recursoshh(){
         return $this->belongsTo(RecursosHumanos::class, 'per_id', 'per_id');
     }
+    public function personal()
+    {
+        return $this->belongsTo(RecursosHumanos::class, 'per_id', 'per_id');
+    }
 }

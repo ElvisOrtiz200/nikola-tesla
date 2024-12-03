@@ -10,9 +10,9 @@
             <nav class="hidden lg:flex lg:space-x-8 lg:py-2" aria-label="Global">
                 <!-- Añadimos un id único a cada botón -->
                 <a href="{{route('curso-docente.create')}}" id="btn-registrar" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" aria-current="page" onclick="handleButtonClick(this, 'btn-registrar')">Registrar</a>
-                <a href="{{route('curso.show')}}" id="btn-editar" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" onclick="handleButtonClick(this, 'btn-editar')">Editar</a>
-                <a href="" id="btn-projects" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" onclick="handleButtonClick(this, 'btn-projects')">Eliminar</a>
-                <a href="" id="btn-calendar" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" onclick="handleButtonClick(this, 'btn-calendar')">Listar</a>
+                <a href="{{route('curso-docente.show')}}" id="btn-editar" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" onclick="handleButtonClick(this, 'btn-editar')">Editar</a>
+                <a href="{{route('cursodocente.eliminar')}}" id="btn-projects" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" onclick="handleButtonClick(this, 'btn-projects')">Eliminar</a>
+                <a href="{{route('curso-docente.listar')}}" id="btn-calendar" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" onclick="handleButtonClick(this, 'btn-calendar')">Listar</a>
             </nav>
             <div class="relative flex h-0 justify-between">
             </div>
@@ -23,9 +23,9 @@
               <div class="space-y-1 px-2 pb-3 pt-2">
                 <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
                 <a href="{{route('curso-docente.create')}}" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" aria-current="page" onclick="handleButtonClick(this, 'btn-registrar')">Registrar</a>
-                <a href="{{route('curso.show')}}" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" onclick="handleButtonClick(this, 'btn-editar')">Editar</a>
-                <a href="" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" onclick="handleButtonClick(this, 'btn-projects')">Eliminar</a>
-                <a href="" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" onclick="handleButtonClick(this, 'btn-calendar')">Listar</a>
+                <a href="{{route('curso-docente.show')}}" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" onclick="handleButtonClick(this, 'btn-editar')">Editar</a>
+                <a href="{{route('cursodocente.eliminar')}}" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" onclick="handleButtonClick(this, 'btn-projects')">Eliminar</a>
+                <a href="{{route('curso-docente.listar')}}" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" onclick="handleButtonClick(this, 'btn-calendar')">Listar</a>
               </div>
               <div class="border-t border-gray-700 pb-3 pt-4">
                 <div class="flex items-center px-4">

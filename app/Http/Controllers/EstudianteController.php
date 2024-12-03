@@ -23,7 +23,7 @@ class EstudianteController extends Controller
         //
         try {
             $validator = FacadesValidator::make(request()->all(), [
-                'alu_dni' => 'required',
+                'alu_dni' => 'required|unique:acad_estudiantes,alu_dni',
                 'alu_apellidos' => 'required',
                 'alu_nombres' => 'required',
                 'apo_dni' => 'required',
@@ -31,7 +31,9 @@ class EstudianteController extends Controller
                 'alu_telefono' => 'required',
             ]);
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                $errorMessages = implode(' ', $validator->errors()->all());
+                return redirect()->route('estudiante.create')
+                    ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
             }
 
             $estudiante = new Estudiante;
@@ -55,24 +57,40 @@ class EstudianteController extends Controller
 
    
 
-    public function show(Request $request){
+    public function show(Request $request)
+    {
         $query = Estudiante::query();
-
+    
         if ($request->has('search') && $request->search != '') {
             $query->where('alu_dni', 'like', '%' . $request->search . '%');
         }
-
+    
         $estudiantes = $query->paginate(4); // Cambia esto para paginación
-
-        return view('estudiante.editar', compact('estudiantes'));
+        $apoderados = Apoderado::all(); // Obtener todos los apoderados
+    
+        return view('estudiante.editar', compact('estudiantes', 'apoderados'));
     }
+    
 
-    public function listadoListar()
+    public function listadoListar(Request $request)
     {
-        // Obtener todos los registros de la tabla 'rol'
-        $estudiantes = Estudiante::paginate(25); // O Rol::paginate(10) para paginación
+        // Crear la consulta base
+        $query = Estudiante::with('apoderado');
 
-        // Retornar la vista 'roles.index' y pasar los roles a la vista
+        // Si se pasa un término de búsqueda, se agrega el filtro
+        if ($request->has('search') && $request->search != '') {
+            $query->where(function($q) use ($request) {
+                $q->where('alu_dni', 'like', '%' . $request->search . '%')
+                  ->orWhere('alu_apellidos', 'like', '%' . $request->search . '%')
+                  ->orWhere('alu_nombres', 'like', '%' . $request->search . '%');
+                  
+            });
+        }
+
+        // Obtener los estudiantes paginados
+        $estudiantes = $query->paginate(10);
+
+
         return view('estudiante.listar', compact('estudiantes'));
     }
 
@@ -89,11 +107,13 @@ class EstudianteController extends Controller
     }
 
     public function editando($id)
-    {
-        $estudiante = Estudiante::findOrFail($id);
+{
+    $estudiante = Estudiante::findOrFail($id);
+    $apoderados = Apoderado::all(); // Obtener todos los apoderados
+    $estudiantes = Estudiante::all(); // Obtener todos los estudiantes
 
-        return view('estudiante.editando', compact('estudiante'));
-    }
+    return view('estudiante.editando', compact('estudiante', 'apoderados', 'estudiantes'));
+}
 
     public function update(Request $request, $id) {
 

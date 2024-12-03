@@ -5,41 +5,162 @@
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Editar</h2>
 
-    <form id="roledit" action="{{ route('estudiante.update', $estudiante->alu_dni) }}" method="POST">
+    <form id="roledit" action="{{ route('estudiante.update', $estudiante->alu_dni) }}" method="POST" onsubmit="return validarFormulario()">
         @csrf
     @method('PUT') 
-        <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-            <div>
-                <input id="alu_dni" name="alu_dni" value="{{ $estudiante->alu_dni }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" readonly>
-            </div>
-        
-            <div>
-                <input id="alu_apellidos" name="alu_apellidos" value="{{ $estudiante->alu_apellidos }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
-
-            
-
-            <div>
-                <input id="alu_nombres" name="alu_nombres" value="{{ $estudiante->alu_nombres }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
-
-            <div>
-                <input id="apo_dni" name="apo_dni" value="{{ $estudiante->apo_dni }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
-
-            <div>
-                <input id="alu_direccion" name="alu_direccion" value="{{ $estudiante->alu_direccion }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
-
-            <div>
-                <input id="alu_telefono" name="alu_telefono" value="{{ $estudiante->alu_telefono }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
-
-            <div>
-                <input id="alu_estado" name="alu_estado" value="{{ $estudiante->alu_estado }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <!-- DNI Estudiante -->
+        <div>
+            <label class="text-gray-700 dark:text-gray-200" for="alu_dni">DNI Estudiante</label>
+            <select 
+                id="alu_dni" 
+                name="alu_dni" 
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md 
+                dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 
+                focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+            >
+                <option value="">Seleccione un estudiante</option>
+                @foreach ($estudiantes as $est)
+                    <option value="{{ $est->alu_dni }}" 
+                        {{ $estudiante->alu_dni == $est->alu_dni ? 'selected' : '' }}>
+                        {{ $est->alu_dni }} - {{ $est->alu_apellidos }} {{ $est->alu_nombres }}
+                    </option>
+                @endforeach
+            </select>
         </div>
         
+
+        <!-- Apellidos -->
+        <div>
+            <label class="text-gray-700 dark:text-gray-200" for="alu_apellidos">Apellidos</label>
+            <input 
+                id="alu_apellidos" 
+                name="alu_apellidos" 
+                value="{{ $estudiante->alu_apellidos }}" 
+                type="text" 
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md 
+                dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 
+                focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorApellidos" class="text-red-500 text-sm hidden mt-1"></div>
+        </div>
+
+        <!-- Nombres -->
+        <div>
+            <label class="text-gray-700 dark:text-gray-200" for="alu_nombres">Nombres</label>
+            <input 
+                id="alu_nombres" 
+                name="alu_nombres" 
+                value="{{ $estudiante->alu_nombres }}" 
+                type="text" 
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md 
+                dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 
+                focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorNombres" class="text-red-500 text-sm hidden mt-1"></div>
+        </div>
+
+        <!-- Apoderado -->
+        <div>
+            <label class="text-gray-700 dark:text-gray-200" for="apo_dni">Apoderado</label>
+            <select 
+                id="apo_dni" 
+                name="apo_dni" 
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md 
+                dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 
+                focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+            >
+                <option value="">Seleccione un apoderado</option>
+                @foreach ($apoderados as $apoderado)
+                    <option value="{{ $apoderado->apo_dni }}" 
+                        {{ $estudiante->apo_dni == $apoderado->apo_dni ? 'selected' : '' }}>
+                        {{ $apoderado->apo_dni }} - {{ $apoderado->apo_apellidos }} {{ $apoderado->apo_nombres }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Dirección -->
+        <div>
+            <label class="text-gray-700 dark:text-gray-200" for="alu_direccion">Dirección</label>
+            <input 
+                id="alu_direccion" 
+                name="alu_direccion" 
+                value="{{ $estudiante->alu_direccion }}" 
+                type="text" 
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md 
+                dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 
+                focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorDireccion" class="text-red-500 text-sm hidden mt-1"></div>
+        </div>
+
+        <!-- Teléfono -->
+        <div>
+            <label class="text-gray-700 dark:text-gray-200" for="alu_telefono">Teléfono</label>
+            <input 
+                id="alu_telefono" 
+                name="alu_telefono" 
+                value="{{ $estudiante->alu_telefono }}" 
+                type="text" 
+                class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md 
+                dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 
+                focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorTelefono" class="text-red-500 text-sm hidden mt-1"></div>
+        </div>
+
+        <script>
+            function validarFormulario() {
+     var valid = true;
+ 
+     // Limpiar mensajes de error anteriores
+     var errorDivs = document.querySelectorAll('.text-red-500');
+     errorDivs.forEach(function (div) {
+         div.classList.add('hidden');
+     });
+ 
+     // Validación de DNI (solo números, longitud de 8 dígitos)
+     var aluDni = document.getElementById('alu_dni').value;
+     if (!aluDni || aluDni.length !== 8 || isNaN(aluDni)) {
+         document.getElementById('errorDni').textContent = "El DNI debe ser un número de 8 dígitos.";
+         document.getElementById('errorDni').classList.remove('hidden');
+         valid = false;
+     }
+ 
+     // Validación de Apellidos (solo letras y espacios)
+     var aluApellidos = document.getElementById('alu_apellidos').value;
+     var regexTexto = /^[A-Za-záéíóúÁÉÍÓÚÑñ\s]+$/;
+     if (!aluApellidos || !regexTexto.test(aluApellidos)) {
+         document.getElementById('errorApellidos').textContent = "Los apellidos solo pueden contener letras y espacios.";
+         document.getElementById('errorApellidos').classList.remove('hidden');
+         valid = false;
+     }
+ 
+     // Validación de Nombres (solo letras y espacios)
+     var aluNombres = document.getElementById('alu_nombres').value;
+     if (!aluNombres || !regexTexto.test(aluNombres)) {
+         document.getElementById('errorNombres').textContent = "Los nombres solo pueden contener letras y espacios.";
+         document.getElementById('errorNombres').classList.remove('hidden');
+         valid = false;
+     }
+ 
+     // Validación de Dirección (campo obligatorio)
+     var aluDireccion = document.getElementById('alu_direccion').value;
+     if (!aluDireccion) {
+         document.getElementById('errorDireccion').textContent = "La dirección es obligatoria.";
+         document.getElementById('errorDireccion').classList.remove('hidden');
+         valid = false;
+     }
+ 
+     // Validación de Teléfono (solo números, longitud de 9 dígitos)
+     var aluTelefono = document.getElementById('alu_telefono').value;
+     if (!aluTelefono || aluTelefono.length !== 9 || isNaN(aluTelefono)) {
+         document.getElementById('errorTelefono').textContent = "El teléfono debe ser un número de 9 dígitos.";
+         document.getElementById('errorTelefono').classList.remove('hidden');
+         valid = false;
+     }
+ 
+     return valid;
+ }
+ 
+         </script>
 
         <div class="flex justify-end mt-6">
             <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
@@ -48,7 +169,7 @@
 
                 <a id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600 cursor-pointer" >Actualizar</a>
             </div>
-            
+            </div>
         </div>
     </form>
 
@@ -107,25 +228,25 @@
 </section>
 
 
+
+
 <script>
     const registerButton = document.getElementById('registerButton');
     const confirmModal = document.getElementById('confirmModal');
     const cancelButton = document.getElementById('cancelButton');
     const confirmButton = document.getElementById('confirmButton');
     
-    
-     // Lógica cuando se confirma el edit
-     confirmButton.addEventListener('click', () => {
-        // Aquí puedes proceder con el registro, por ejemplo, enviando el formulario
-        document.getElementById('roledit').submit();
+    registerButton.addEventListener('click', function () {
+    if (validarFormulario()) {     
+        confirmModal.classList.remove('hidden');    
+    }
     });
 
-    // Mostrar el modal cuando se hace clic en "Registrar"
-    registerButton.addEventListener('click', () => {
-        confirmModal.classList.remove('hidden');
+    confirmButton.addEventListener('click', () => {
+
+        document.getElementById('rolCrear').submit();
     });
 
-    // Ocultar el modal cuando se hace clic en "Cancelar"
     cancelButton.addEventListener('click', () => {
         confirmModal.classList.add('hidden');
     });

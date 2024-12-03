@@ -10,6 +10,12 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
 
      <title>Panel de Administración</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,58 +29,83 @@
             <!-- Remove class [ hidden ] and replace [ sm:flex ] with [ flex ] -->
             <!--- more free and premium Tailwind CSS components at https://tailwinduikit.com/ --->
             <div style="min-height: 716px" class="w-64 absolute sm:relative bg-gray-800 shadow md:h-full flex-col justify-between hidden sm:flex">
-                <div class="px-8">
+                
+                @if ($nombreRol == "Estudiante"  )
+                <div class="flex flex-col">
                     <div class="h-16 w-full flex items-center">
                         <img viewBox="0 0 54 40" class="h-12 mr-2" fill="none" src="/img/logo_tesla.png" alt="Logo Escuela" />
                         <span class="text-surface-900 dark:text-surface-0 font-medium text-lg leading-normal text-white">NIKOLA TESLA</span>
                     </div>
 
-                    @if ($idrol === 11)
-                    <!-- Contenedor de botones con efecto de deslizamiento -->
-                        <!-- Botón 1 (Roles) -->
-                        <li class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6 mt-11">
-                            <a href="{{route('docentesCursosVistas.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-6">Mis cursos</span>
-                            </a>
-                        </li>   
-                        
-                    @endif
+                        <div>
+                            <li class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6 mt-11">
+                                <a href="{{route('estudiantesCursosVistas.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-6">Mis cursos</span>
+                                </a>
+                            </li>   
+                            
+                            <li class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6 mt-11">
+                                <a href="{{route('estudiantesHorarioVistas.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-6">Horario</span>
+                                </a>
+                            </li>   
+                        </div>
+                </div>
+                    
+                  
+                @endif
+
+                @if ( $nombreRol == "Docente" )
+
+                <div class="flex flex-col">
+                    <div class="h-16 w-full flex items-center">
+                        <img viewBox="0 0 54 40" class="h-12 mr-2" fill="none" src="/img/logo_tesla.png" alt="Logo Escuela" />
+                        <span class="text-surface-900 dark:text-surface-0 font-medium text-lg leading-normal text-white">NIKOLA TESLA</span>
+                    </div>
+                    <div class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6 mt-11">
 
 
+                    <a href="{{route('docentesCursosVistas.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z"></path>
+                            <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                            <circle cx="12" cy="12" r="9"></circle>
+                        </svg>
+                        <span class="text-sm ml-6">Mis cursos Docentes Vista</span>
+                    </a>
+                    </div> 
 
-                    @if ($idrol === 17)
-                    <!-- Contenedor de botones con efecto de deslizamiento -->
-                        <!-- Botón 1 (Roles) -->
-                        <li class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6 mt-11">
-                            <a href="{{route('estudiantesCursosVistas.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-6">Mis cursos</span>
-                            </a>
-                        </li>   
-                        
-                        <li class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6 mt-11">
-                            <a href="{{route('estudiantesHorarioVistas.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-6">Horario</span>
-                            </a>
-                        </li>   
-                    @endif
-
-                    @if ($idrol === 14)
-
+                    </div>
+                 
+            @endif
+                
+                @if ($nombreRol == "Administrador" )
+                <div class="px-8">
+                    <div class="h-16 w-full flex items-center">
+                        <img viewBox="0 0 54 40" class="h-12 mr-2" fill="none" src="/img/logo_tesla.png" alt="Logo Escuela" />
+                        <span class="text-surface-900 dark:text-surface-0 font-medium text-lg leading-normal text-white">NIKOLA TESLA</span>
+                    </div>
+                   
+                    {{-- <li class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6 mt-11">
+                        <a href="{{route('estudiantesCursosVistas.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z"></path>
+                                <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                <circle cx="12" cy="12" r="9"></circle>
+                            </svg>
+                            <span class="text-sm ml-6">Mis cursos</span>
+                        </a>
+                    </li>    --}}
                     <button id="toggleButton" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
                         <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
                         <span>Gestión de Usuarios</span>
@@ -111,9 +142,7 @@
                         </li>
                     </ul>
 
-                    @endif
-
-                    @if ($idrol === 14)
+                   
 
                     <button id="toggleButton2" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
                         <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
@@ -213,15 +242,7 @@
                      
 
                     </ul>
-
-                    @endif
-
-
-
-
-
-                    @if ($idrol === 14)
-
+                  
                     <button id="toggleButton3" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
                         <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
                         <span>Gestión de Personal</span>
@@ -255,12 +276,6 @@
                         </li>
                         
                     </ul>
-                    @endif
-
-
-
-                    @if ($idrol === 14)
-
                     <button id="toggleButton4" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
                         <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
                         <span>Gestión de Estudiantes</span>
@@ -296,19 +311,8 @@
                         </li>
                         
                     </ul>
-
-
-                    @endif
-
-
-
-
-
-
-                   
-
                 </div>
-
+                @endif
             </div>
 
             <button aria-label="toggle sidebar" id="openSideBar" class="md:hidden h-10 w-10 bg-gray-800 fixed left-0 mt-16 mr-2 flex items-center shadow rounded-tr rounded-br justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 rounded focus:ring-gray-800" onclick="sidebarHandler(true)">
@@ -326,7 +330,7 @@
                 </svg>
             </button>
             
-            <div class="w-64 hidden z-40 absolute bg-gray-800 shadow md:h-full flex-col justify-between sm:hidden transition duration-150 ease-in-out" id="mobile-nav" >
+            <div class="w-64 hidden z-40 absolute bg-gray-800 shadow md:h-full h-auto flex-col justify-between sm:hidden transition duration-150 ease-in-out" id="mobile-nav" >
                 
                 <button aria-label="Close sidebar" id="closeSideBar" class=" h-10 w-10 bg-gray-800 absolute right-0 mt-16 -mr-10 flex items-center shadow rounded-tr rounded-br justify-center cursor-pointer text-white" onclick="sidebarHandler(false)">
                     <svg  xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="20" height="20" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -343,7 +347,7 @@
 
 
 
-                    @if ($idrol === 14)
+                    @if ($nombreRol == "Administrador")
 
                     <button id="toggleButton5" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
                         <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
@@ -386,7 +390,7 @@
                     @endif
 
 
-                    @if ($idrol === 14)
+                    @if ($nombreRol == "Administrador")
 
                     <button id="toggleButton6" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
                         <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
@@ -471,7 +475,7 @@
 
 
 
-                    @if ($idrol === 14)
+                    @if ($nombreRol == "Administrador")
                     <button id="toggleButton7" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
                         <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
                         <span>Gestión de Personal</span>
@@ -509,7 +513,7 @@
 
                     @endif
 
-                    @if ($idrol === 14)
+                    @if ($nombreRol == "Administrador")
 
                     <button id="toggleButton8" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
                         <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
@@ -573,7 +577,7 @@
                         </div>
                         
                         <!-- Mobile Menu open: "block", Menu closed: "hidden" -->
-                        <div x-cloak :class="[isOpen ? 'translate-x-0 opacity-100 ' : 'opacity-0 -translate-x-full']" class="absolute inset-x-0 z-20 w-full px-6 py-1 transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 md:mt-0 md:p-0 md:top-0 md:relative md:bg-transparent md:w-auto md:opacity-100 md:translate-x-0 md:flex md:items-center ">
+                        <div x-cloak :class="[isOpen ? 'translate-x-0 opacity-100 ' : 'opacity-0 -translate-x-full']" class="absolute inset-x-0 z-20 w-full px-6 py-1 transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 md:mt-0 md:p-0 md:top-0 md:relative md:bg-transparent md:w-auto md:opacity-100 md:translate-x-0 md:flex md:items-center rounded-xl">
                             <div class="flex flex-row mx-6 ">
                                 
                                 <form  action="{{ route('logout') }}" method="POST" class="mr-5">
@@ -589,7 +593,7 @@
                         </div>
                     </div>
                 </nav>
-                <div class="mt-10">
+                <div class="mt-14">
                @yield('content')
                 </div>
             </div>

@@ -23,76 +23,128 @@
 
 
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
-    <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Registrar docente a curso</h2>
-
-    <form id="rolCrear" action="{{route('curso-docente.store')}}" method="POST">
-
-    
-
-        <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-
-            <div class="max-w-xs mx-auto mt-4">
-                <label class="text-gray-700 dark:text-gray-200" for="acu_nombre">Seleccionar curso académico</label>
-    
-                <select
-                    class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    id="selectOption"
-                    name="acu_id"
-                >
-                @foreach ($cursos as $itemCursos)
-                <option value="{{ $itemCursos->acu_id}}">{{ $itemCursos->acu_nombre }} </option>
-            @endforeach
-            
-                   
-                </select>
-            </div>
-    
-            <div class="max-w-xs mx-auto mt-4">
-                <label class="text-gray-700 dark:text-gray-200" for="per_id">Seleccionar docente</label>
-    
-                <select
-                    class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    id="selectOption"
-                    name="per_id"
-                >
-                @foreach ($docentes as $itemdocentes)
-                <option value="{{ $itemdocentes->per_id}}">{{ $itemdocentes->apellidosDoc }} - {{ $itemdocentes->nombresDoc }}</option>
-            @endforeach
-            
-                   
-                </select>
-            </div>
-
-            <div class="disabled">
-                <label class="text-gray-700 dark:text-gray-200" for="acdo_anio">Año</label>
-                <input id="acdo_anio" name="acdo_anio" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" readonly>
-            </div>
-            
-            <div id="date-range-picker" class="flex items-center">
-                <div class="relative">
-                    <label class="text-gray-700 dark:text-gray-200" for="acdo_fecha_ini">Fecha de inicio</label>
-                    <input id="datepicker-range-start" name="acdo_fecha_ini"  type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Fecha de inicio">
-                </div>
-                <span class="mx-4 text-gray-500">a</span>
-                <div class="relative">
-                    <label class="text-gray-700 dark:text-gray-200" for="acdo_fecha_fin">Fecha fin</label>
-                    <input id="datepicker-range-end" name="acdo_fecha_fin"  type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Fecha fin">
-                </div>
-            </div>
-
-
-            <div class="hidden">
-                <label class="text-gray-700 dark:text-gray-200" for="acu_nombre">Estado</label>
-                <input id="acdo_estado" name="acdo_estado" type="text" value="1" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
-
-        </div>
-
-        <div class="flex justify-end mt-6">
-            <button id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600" type="button">Registrar</button>
-        </div>
+    <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <h2 class="text-xl font-bold text-gray-800 capitalize dark:text-white mb-6">
+            Registrar docente a curso
+        </h2>
         
-    </form>
+        <form id="rolCrear" action="{{ route('curso-docente.store') }}" method="POST" onsubmit="return validarFormulario()" class="space-y-6">
+            <div>
+                <label for="example-select1" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Selecciona un grado
+                </label>
+                <select id="example-select1" name="id_grado" class="block w-full mt-1 p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                    <option value="">Selecciona un grado</option>
+                    @foreach ($grado as $itemgrado)
+                        <option value="{{ $itemgrado->id_grado }}">{{ $itemgrado->grado }} {{ $itemgrado->nivel }}</option>
+                    @endforeach
+                </select>
+                <div id="errorGrado" class="text-red-500 text-sm hidden">Por favor, selecciona un grado.</div>
+            </div>
+        
+            <div>
+                <label for="example-select4" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Selecciona un curso
+                </label>
+                <select id="example-select4" name="acu_id" class="block w-full mt-1 p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                    <option value="">Selecciona un curso</option>
+                </select>
+                <div id="errorCurso" class="text-red-500 text-sm hidden">Por favor, selecciona un curso.</div>
+            </div>
+        
+            <div>
+                <label for="selectOption" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Seleccionar docente
+                </label>
+                <select id="selectOption" name="per_id" class="block w-full mt-1 p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                    @foreach ($docentes as $itemdocentes)
+                        <option value="{{ $itemdocentes->per_id }}">{{ $itemdocentes->apellidosDoc }} - {{ $itemdocentes->nombresDoc }}</option>
+                    @endforeach
+                </select>
+                <div id="errorDocente" class="text-red-500 text-sm hidden">Por favor, selecciona un docente.</div>
+            </div>
+        
+            <div id="date-range-picker" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="datepicker-range-start" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Fecha de inicio
+                    </label>
+                    <input id="datepicker-range-start" name="acdo_fecha_ini" type="text" class="block w-full mt-1 p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700 dark:bg-gray-800 dark:text-gray-300" placeholder="Fecha de inicio">
+                    <div id="errorFechaInicio" class="text-red-500 text-sm hidden">Por favor, selecciona una fecha de inicio.</div>
+                </div>
+                <div>
+                    <label for="datepicker-range-end" class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Fecha fin
+                    </label>
+                    <input id="datepicker-range-end" name="acdo_fecha_fin" type="text" class="block w-full mt-1 p-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700 dark:bg-gray-800 dark:text-gray-300" placeholder="Fecha fin">
+                    <div id="errorFechaFin" class="text-red-500 text-sm hidden">Por favor, selecciona una fecha fin.</div>
+                </div>
+            </div>
+        
+            <div id="error-message" class="hidden p-4 text-red-600 bg-red-100 border border-red-300 rounded-lg">
+                Por favor, completa todos los campos obligatorios.
+            </div>
+        
+            <div class="flex justify-end">
+                <button id="registerButton" type="button" class="px-6 py-2 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-500 focus:outline-none focus:bg-blue-500">
+                    Registrar
+                </button>
+            </div>
+        </form>
+        
+        <script>
+            function validarFormulario() {
+                let valid = true;
+        
+                // Reiniciar mensajes de error
+                const errorMessages = document.querySelectorAll('.text-red-500');
+                errorMessages.forEach((message) => {
+                    message.classList.add('hidden');
+                });
+        
+                // Validación de grado
+                const grado = document.getElementById('example-select1').value;
+                if (!grado) {
+                    document.getElementById('errorGrado').classList.remove('hidden');
+                    valid = false;
+                }
+        
+                // Validación de curso
+                const curso = document.getElementById('example-select4').value;
+                if (!curso) {
+                    document.getElementById('errorCurso').classList.remove('hidden');
+                    valid = false;
+                }
+        
+                // Validación de docente
+                const docente = document.getElementById('selectOption').value;
+                if (!docente) {
+                    document.getElementById('errorDocente').classList.remove('hidden');
+                    valid = false;
+                }
+        
+                // Validación de fecha de inicio
+                const fechaInicio = document.getElementById('datepicker-range-start').value;
+                if (!fechaInicio) {
+                    document.getElementById('errorFechaInicio').classList.remove('hidden');
+                    valid = false;
+                }
+        
+                // Validación de fecha fin
+                const fechaFin = document.getElementById('datepicker-range-end').value;
+                if (!fechaFin) {
+                    document.getElementById('errorFechaFin').classList.remove('hidden');
+                    valid = false;
+                }
+        
+                return valid;
+            }
+        </script>
+        
+    </div>
+    
+   
+    
 </section>
 
 <div id="confirmModal" class="fixed inset-0  items-center justify-center bg-black bg-opacity-50 hidden">
@@ -178,22 +230,53 @@ setTimeout(() => {
     const cancelButton = document.getElementById('cancelButton');
     const confirmButton = document.getElementById('confirmButton');
     
-    
-     // Lógica cuando se confirma el registro
-     confirmButton.addEventListener('click', () => {
-        // Aquí puedes proceder con el registro, por ejemplo, enviando el formulario
+    registerButton.addEventListener('click', function () {
+    if (validarFormulario()) {     
+        confirmModal.classList.remove('hidden');    
+    }
+    });
+
+    confirmButton.addEventListener('click', () => {
+
         document.getElementById('rolCrear').submit();
     });
 
-    // Mostrar el modal cuando se hace clic en "Registrar"
-    registerButton.addEventListener('click', () => {
-        confirmModal.classList.remove('hidden');
-    });
-
-    // Ocultar el modal cuando se hace clic en "Cancelar"
     cancelButton.addEventListener('click', () => {
         confirmModal.classList.add('hidden');
     });
+
+</script>
+
+
+
+<script>
+    $(document).ready(function() {
+    $('#example-select1').change(function() {
+        var gradoId = $(this).val();
+
+        // Usando el nombre de la ruta
+        var url = '{{ route("get.cursos", ":gradoId") }}';
+        url = url.replace(':gradoId', gradoId); // Reemplaza el parámetro con el id del grado
+
+        // Realiza la solicitud AJAX con la URL generada
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function(data) {
+                // Aquí manejas la respuesta, por ejemplo, llenando el select de cursos
+                var select = $('#example-select4');
+                select.empty(); // Limpia las opciones actuales
+
+                data.forEach(function(curso) {
+                    select.append('<option value="' + curso.acu_id + '">' + curso.acu_nombre + '</option>');
+                });
+            },
+            error: function() {
+                alert('Error al cargar los cursos');
+            }
+        });
+    });
+});
 
 </script>
 @endsection

@@ -30,7 +30,7 @@ class RolController extends Controller
         return view('rol.index');
     }
 
-
+ 
     /**
      * Show the form for creating a new resource.
      */
@@ -43,28 +43,29 @@ class RolController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        try {
-            // Validar los datos
-            $request->validate([
-                'nombre_rol' => 'required|string|max:255',
-            ]);
+        {
+            try {
+                // Validar los datos
+                $request->validate([
+                    'nombre_rol' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/','unique:rol,nombre_rol'],
+                ]);
 
-            // Crear el rol
-            Rol::create([
-                'nombre_rol' => $request->nombre_rol
-            ]);
- 
-            // Redirigir con cookie de éxito
-            return redirect()->route('rol.create')
-                ->withCookie(cookie('success', 'Rol registrado con éxito.', 1, '/', null, false, false));
-        } catch (\Exception $e) {
-            // Manejar la excepción (puedes loguear el error o mostrar un mensaje)
-            return redirect()->route('rol.create')
-                ->withCookie(cookie('error', 'Error al registrar. Operación cancelada', 1));
+                // Crear el rol
+                Rol::create([
+                    'nombre_rol' => $request->nombre_rol
+                ]);
+                // Redirigir con cookie de éxito
+                return redirect()->route('rol.create')
+                    ->withCookie(cookie('success', 'Rol registrado con éxito.', 1, '/', null, false, false));
+
+            } catch (\Exception $e) {
+                // Manejar la excepción y enviar mensaje en cookie
+                return redirect()->route('rol.create')
+                    ->withCookie(cookie('error', 'Error al registrar. Operación cancelada: ' . $e->getMessage(), 1, '/', null, false, false));
+            }
         }
-    }
 
+ 
     /**
      * Display the specified resource.
      */
@@ -141,21 +142,36 @@ class RolController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
-    {
- 
+{
+    try {
+        // Validar los datos
         $request->validate([
-            'nombre_rol' => 'required|string|max:255',
+            'nombre_rol' => [
+                'required',
+                'string',
+                'max:255',
+                'regex:/^[a-zA-Z\s]+$/', // Solo permite letras y espacios
+                'unique:rol,nombre_rol,' .  $id . ',idrol',  // Validar que el nombre de rol sea único, pero excluyendo el rol actual
+            ],
         ]);
-        // Encontrar el rol por ID 
+
+        // Encontrar el rol por ID
         $rol = Rol::findOrFail($id);
+
         // Actualizar el rol
         $rol->nombre_rol = $request->nombre_rol;
         $rol->save();
 
         // Redirigir con mensaje de éxito
-        return redirect()->route('rol.editar') // Cambia a la ruta que desees
+        return redirect()->route('rol.editar', ['id' => $id])
             ->withCookie(cookie('success', 'Rol actualizado con éxito.', 1, '/', null, false, false));
+
+    } catch (\Exception $e) {
+        // En caso de error, redirigir con mensaje de error en cookie
+        return redirect()->route('rol.editar', ['id' => $id])
+            ->withCookie(cookie('error', 'Error al actualizar. Operación cancelada: ' . $e->getMessage(), 1, '/', null, false, false));
     }
+}
 
     /**
      * Remove the specified resource from storage.

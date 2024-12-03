@@ -20,69 +20,166 @@
 </div>
 @endif
 
-
+@if (request()->cookie('error'))
+<div id="alert" class="fixed top-4 right-4 z-50 flex w-full max-w-sm overflow-hidden bg-red-500 rounded-lg shadow-md dark:bg-red-700" style="display: flex;">
+    <div class="flex items-center justify-center w-12 bg-red-600">
+        <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 3.33331C10.8 3.33331 3.33337 10.8 3.33337 20C3.33337 29.2 10.8 36.6666 20 36.6666C29.2 36.6666 36.6667 29.2 36.6667 20C36.6667 10.8 29.2 3.33331 20 3.33331ZM16.6667 28.3333L8.33337 20L10.6834 17.65L16.6667 23.6166L29.3167 10.9666L31.6667 13.3333L16.6667 28.3333Z" />
+        </svg>
+    </div>
+    <div class="px-4 py-2 -mx-3">
+        <div class="mx-3">
+            <span class="font-semibold text-white">¡Error!</span>
+            <p class="text-sm text-white">{{ request()->cookie('error') }}</p>
+        </div>
+    </div>
+</div>
+@endif
 
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Registrar usuario</h2>
 
-    <form id="rolCrear" action="{{route('estudiante.store')}}" method="POST">
+    <form id="rolCrear" action="{{route('estudiante.store')}}" method="POST" onsubmit="return validarFormulario()">
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="alu_dni">DNI</label>
                 <input id="alu_dni" name="alu_dni" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorDni" class="text-red-500 text-sm hidden"></div>
             </div>
 
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="alu_apellidos">Apellidos</label>
                 <input id="alu_apellidos" name="alu_apellidos" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorApellidos" class="text-red-500 text-sm hidden"></div>
             </div>
 
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="alu_nombres">Nombres</label>
                 <input id="alu_nombres" name="alu_nombres" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorNombres" class="text-red-500 text-sm hidden"></div>
             </div>
 
-            {{-- <div>
-                <label class="text-gray-700 dark:text-gray-200" for="apo_dni">DNI Apoderado</label>
-                <input id="apo_dni" name="apo_dni" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div> --}}
-
-            <div class="relative group">
-                <button type="button" id="dropdown-button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
-                  <span class="mr-2">DNI del apoderado</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 -mr-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M6.293 9.293a1 1 0 011.414 0L10 11.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                  </svg>
-                </button>
-                <div id="dropdown-menu" class="hidden absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
-                  <!-- Search input -->
-                  <input id="search-input" name="apo_dni" class="block w-full px-4 py-2 text-gray-800 border rounded-md border-gray-300 focus:outline-none" type="text" placeholder="Buscar DNI" autocomplete="off">
-                  
-                  <!-- Dropdown content goes here -->
-                  @foreach($apoderado as $personal)
-                  <a href="javascript:void(0);" 
-                      id="valor"
-                     class="dropdown-items block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md"
-                     data-id="{{ $personal->apo_dni }}" data-dni="{{ $personal->apo_dni }}">
-                     {{ $personal->apo_dni }}
-                  </a>
-                  @endforeach
+            <div class="mb-4">
+                <label for="apo_dni" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Apoderado
+                </label>
+                <div class="relative">
+                    <select
+                        id="apo_dni"
+                        name="apo_dni"
+                        class="select2 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-300 focus:outline-none sm:text-sm"
+                        required
+                    >
+                      
+                        @foreach ($apoderado as $apoderad)
+                            <option value="{{ $apoderad->apo_dni }}">
+                                {{ $apoderad->apo_dni }} 
+                            </option>
+                        @endforeach
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <!-- Ícono de flecha -->
+                        <svg
+                            class="w-5 h-5 text-gray-400"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M19 9l-7 7-7-7"
+                            />
+                        </svg>
+                    </div>
                 </div>
-              </div> 
+               
+            </div>
+            
+            <script>
+                $(document).ready(function() {
+                    $('.select2').select2({
+                        placeholder: "Seleccione un apoderado",
+                        allowClear: true,
+                        width: 'resolve' // Permite que se adapte al ancho del contenedor
+                    });
+                });
+            </script>
+
 
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="alu_direccion">Dirección</label>
                 <input id="alu_direccion" name="alu_direccion" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorDireccion" class="text-red-500 text-sm hidden"></div>
             </div>
 
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="alu_telefono">Teléfono</label>
                 <input id="alu_telefono" name="alu_telefono" type="number" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorTelefono" class="text-red-500 text-sm hidden"></div>
             </div>
 
             
 
         </div>
+        <script>
+           function validarFormulario() {
+    var valid = true;
+
+    // Limpiar mensajes de error anteriores
+    var errorDivs = document.querySelectorAll('.text-red-500');
+    errorDivs.forEach(function (div) {
+        div.classList.add('hidden');
+    });
+
+    // Validación de DNI (solo números, longitud de 8 dígitos)
+    var aluDni = document.getElementById('alu_dni').value;
+    if (!aluDni || aluDni.length !== 8 || isNaN(aluDni)) {
+        document.getElementById('errorDni').textContent = "El DNI debe ser un número de 8 dígitos.";
+        document.getElementById('errorDni').classList.remove('hidden');
+        valid = false;
+    }
+
+    // Validación de Apellidos (solo letras y espacios)
+    var aluApellidos = document.getElementById('alu_apellidos').value;
+    var regexTexto = /^[A-Za-záéíóúÁÉÍÓÚÑñ\s]+$/;
+    if (!aluApellidos || !regexTexto.test(aluApellidos)) {
+        document.getElementById('errorApellidos').textContent = "Los apellidos solo pueden contener letras y espacios.";
+        document.getElementById('errorApellidos').classList.remove('hidden');
+        valid = false;
+    }
+
+    // Validación de Nombres (solo letras y espacios)
+    var aluNombres = document.getElementById('alu_nombres').value;
+    if (!aluNombres || !regexTexto.test(aluNombres)) {
+        document.getElementById('errorNombres').textContent = "Los nombres solo pueden contener letras y espacios.";
+        document.getElementById('errorNombres').classList.remove('hidden');
+        valid = false;
+    }
+
+    // Validación de Dirección (campo obligatorio)
+    var aluDireccion = document.getElementById('alu_direccion').value;
+    if (!aluDireccion) {
+        document.getElementById('errorDireccion').textContent = "La dirección es obligatoria.";
+        document.getElementById('errorDireccion').classList.remove('hidden');
+        valid = false;
+    }
+
+    // Validación de Teléfono (solo números, longitud de 9 dígitos)
+    var aluTelefono = document.getElementById('alu_telefono').value;
+    if (!aluTelefono || aluTelefono.length !== 9 || isNaN(aluTelefono)) {
+        document.getElementById('errorTelefono').textContent = "El teléfono debe ser un número de 9 dígitos.";
+        document.getElementById('errorTelefono').classList.remove('hidden');
+        valid = false;
+    }
+
+    return valid;
+}
+
+        </script>
+
 
         <div class="flex justify-end mt-6">
             <button id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600" type="button">Registrar</button>
@@ -152,13 +249,11 @@
 setTimeout(() => {
     const alert = document.getElementById('alert');
     if (alert) {
-        // Ocultar el mensaje
         alert.style.display = 'none';
-        
-        // Eliminar la cookie 'success' después de ocultar el mensaje
-        deleteCookie('success');
+        deleteCookie('success'); // Borrar cookie de éxito
+        deleteCookie('error');   // Borrar cookie de error
     }
-}, 2000);
+}, 3000);
 </script>
 
 <script>
@@ -167,19 +262,17 @@ setTimeout(() => {
     const cancelButton = document.getElementById('cancelButton');
     const confirmButton = document.getElementById('confirmButton');
     
-    
-     // Lógica cuando se confirma el registro
-     confirmButton.addEventListener('click', () => {
-        // Aquí puedes proceder con el registro, por ejemplo, enviando el formulario
+    registerButton.addEventListener('click', function () {
+    if (validarFormulario()) {     
+        confirmModal.classList.remove('hidden');    
+    }
+    });
+
+    confirmButton.addEventListener('click', () => {
+
         document.getElementById('rolCrear').submit();
     });
 
-    // Mostrar el modal cuando se hace clic en "Registrar"
-    registerButton.addEventListener('click', () => {
-        confirmModal.classList.remove('hidden');
-    });
-
-    // Ocultar el modal cuando se hace clic en "Cancelar"
     cancelButton.addEventListener('click', () => {
         confirmModal.classList.add('hidden');
     });

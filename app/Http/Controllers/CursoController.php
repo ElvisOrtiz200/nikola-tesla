@@ -12,8 +12,35 @@ class CursoController extends Controller
 {
     public function index()
     {
-
+ 
         return view('curso.index');
+    }
+
+    public function listar(Request $request)
+    {
+        // Obtener los filtros de búsqueda
+        $searchCurso = $request->query('searchCurso');
+        $searchGrado = $request->query('searchGrado');
+        $searchNivel = $request->query('searchNivel');
+
+        // Consultar cursos con relación a grado y nivel, aplicando filtros
+        $cursos = Curso::with('grado.nivel')
+            ->when($searchCurso, function ($query, $searchCurso) {
+                return $query->where('acu_nombre', 'LIKE', '%' . $searchCurso . '%');
+            })
+            ->when($searchGrado, function ($query, $searchGrado) {
+                return $query->whereHas('grado', function ($q) use ($searchGrado) {
+                    $q->where('nombre', 'LIKE', '%' . $searchGrado . '%');
+                });
+            })
+            ->when($searchNivel, function ($query, $searchNivel) {
+                return $query->whereHas('grado.nivel', function ($q) use ($searchNivel) {
+                    $q->where('nombre', 'LIKE', '%' . $searchNivel . '%');
+                });
+            })
+            ->paginate(10);
+
+        return view('curso.listar', compact('cursos'));
     }
  
     public function create()
@@ -27,13 +54,15 @@ class CursoController extends Controller
         //
         try {
             $validator = FacadesValidator::make(request()->all(), [
-                'acu_nombre' => 'required',
+                'acu_nombre' => 'required|unique:acad_cursos,acu_nombre',
                 'id_grado' => 'required'
                
               
             ]);
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                $errorMessages = implode(' ', $validator->errors()->all());
+                return redirect()->route('curso.create')
+                    ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
             }
 
             $curso = new Curso();
@@ -51,52 +80,53 @@ class CursoController extends Controller
         }
     }
     public function show(Request $request){
-        $query = Curso::query();
+        $search = $request->query('search');
+        $cursos = Curso::with('grado.nivel')
+            ->when($search, function ($query, $search) {
+                $query->where('acu_nombre', 'like', '%' . $search . '%');
+            })
+            ->paginate(10); // Paginación de 10 elementos por página
 
-        if ($request->has('search') && $request->search != '') {
-            $query->where('acu_nombre', 'like', '%' . $request->search . '%');
-        }
-
-        $cursos = $query->paginate(4); // Cambia esto para paginación
-
-        return view('curso.editar', compact('cursos'));
+        return view('curso.editar', compact('cursos', 'search'));
     }
 
     public function editando($id)
     {
         $curso = Curso::findOrFail($id);
-
-        return view('curso.editando', compact('curso'));
+        // $curso = AcadCurso::findOrFail($id);
+        $grados = Grado::all(); // Obtener todos los grados para el dropdown
+        // return view('cursos.edit', compact('curso', 'grados'));
+        return view('curso.editando', compact('curso','grados'));
     }
 
 
     public function update(Request $request, $id) {
 
         
-        $validator = FacadesValidator::make(request()->all(), [
-                'acu_nombre' => 'required',
-                'acu_estado' => 'required',
+        $request->validate([
+            'acu_nombre' => 'required|string|max:200|unique:acad_cursos,acu_nombre,' . $id . ',acu_id',
+            'id_grado' => 'nullable|exists:acad_grado,id_grado',
         ]);
-
-        $curso = Curso::findOrFail($id); 
+    
+        $curso = Curso::findOrFail($id);
         $curso->acu_nombre = $request->acu_nombre;
-        $curso->acu_estado = $request->acu_estado;
+        $curso->id_grado = $request->id_grado;
         $curso->save();
     
-        return redirect()->route('apoderado.show') // Cambia a la ruta que desees
+        return redirect()->route('curso.show') // Cambia a la ruta que desees
         ->withCookie(cookie('success', 'Apoderado actualizado con éxito.', 1, '/', null, false, false));
     }
 
     public function delete(Request $request){
-        $query = Curso::query();
+        $search = $request->query('search');
 
-        if ($request->has('search') && $request->search != '') {
-            $query->where('acu_nombre', 'like', '%' . $request->search . '%');
-        }
+        $cursos = Curso::with('grado')
+            ->when($search, function ($query, $search) {
+                return $query->where('acu_nombre', 'LIKE', '%' . $search . '%');
+            })
+            ->paginate(10);
 
-        $curso = $query->paginate(4); // Cambia esto para paginación
-
-        return view('curso.eliminar', compact('curso'));
+        return view('curso.eliminar', compact('cursos'));
    }
 
    public function eliminando($id)

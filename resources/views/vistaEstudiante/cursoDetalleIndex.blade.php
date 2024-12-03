@@ -62,72 +62,58 @@
     </div>
     
 
-    <!-- Sección de Recursos Académicos -->
-    <div class="mb-6 p-4 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-700">
-        <h3 class="text-xl font-semibold text-gray-700 dark:text-white">Recursos Académicos</h3>
-         <!-- Tabla de recursos -->
-         <div class="mt-6 overflow-x-auto">
-            <table class="min-w-full bg-white border border-gray-300">
-                <thead>
+    
+
+    <div class="mt-6 overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-300">
+            <thead>
+                <tr>
+                    <th class="p-4 text-left">Ícono</th>
+                    <th class="p-4 text-left">Nombre del Recurso</th>
+                    <th class="p-4 text-left">Descripción</th>
+                    <th class="p-4 text-left">Fecha</th>
+                    <th class="p-4 text-left">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($recursos as $recurso)
                     <tr>
-                        <th class="p-4 text-left">Ícono</th>
-                        <th class="p-4 text-left">Nombre del Recurso</th>
-                        <th class="p-4 text-left">Descripción</th>
-                        <th class="p-4 text-left">Fecha</th>
-                        <th class="p-4 text-left">Acciones</th>
+                        <td class="p-4">
+                            <!-- Ícono de enlace, representando el recurso -->
+                            <i class="fas fa-link text-blue-500 text-xl"></i>
+                        </td>
+                        <td class="p-4">{{ $recurso->titulo }}</td>
+                        <td class="p-4">{{ $recurso->descripcion }}</td>
+                        <td class="p-4">{{ $recurso->fecha_subida }}</td>
+                        <td class="p-4 flex space-x-2">
+                            <!-- Copiar enlace -->
+                            <button onclick="copyToClipboard('{{ $recurso->ruta_archivo }}')" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                                <i class="fas fa-link"></i> Copiar Enlace
+                            </button>
+                           
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @forelse ($recursos as $recurso)
-                        <tr>
-                            <td class="p-4">
-                                <!-- Ícono dinámico según la extensión -->
-                                @php
-                                    $ext = pathinfo($recurso->nombre_archivo, PATHINFO_EXTENSION);
-                                @endphp
-                                @if ($ext == 'pdf')
-                                    <i class="fas fa-file-pdf text-red-500 text-xl"></i>
-                                @elseif (in_array($ext, ['doc', 'docx']))
-                                    <i class="fas fa-file-word text-blue-500 text-xl"></i>
-                                @elseif (in_array($ext, ['xls', 'xlsx']))
-                                    <i class="fas fa-file-excel text-green-500 text-xl"></i>
-                                @elseif (in_array($ext, ['ppt', 'pptx']))
-                                    <i class="fas fa-file-powerpoint text-orange-500 text-xl"></i>
-                                @else
-                                    <i class="fas fa-file text-gray-500 text-xl"></i>
-                                @endif
-                            </td>
-                            <td class="p-4">{{ $recurso->titulo }}</td>
-                            <td class="p-4">{{ $recurso->descripcion }}</td>
-                            <td class="p-4">{{ $recurso->fecha_subida }}</td>
-                            <td class="p-4 flex space-x-2">
-                                <!-- Botón de Descargar -->
-                                <a href="{{ asset('storage/' . $recurso->ruta_archivo) }}" target="_blank" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                    Descargar
-                                </a>
-                                <!-- Botón de Editar -->
-                                {{-- <button onclick="openEditModal({{ $recurso->id }})" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-                                    Editar
-                                </button> --}}
-                                <!-- Botón de Eliminar -->
-                                {{-- <form action="{{ route('recursos.destroy', $recurso->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este recurso?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-                                        Eliminar
-                                    </button>
-                                </form> --}}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="p-4 text-center text-gray-500">No hay recursos disponibles.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                @empty
+                    <tr>
+                        <td colspan="5" class="p-4 text-center text-gray-500">No hay recursos disponibles.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
+    
+    <script>
+        // Función para copiar el enlace al portapapeles
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert("Enlace copiado al portapapeles!");
+            }).catch(function(err) {
+                console.error("Error al copiar el enlace: ", err);
+            });
+        }
+        
+    </script>    
+
 
     <!-- Sección de Actividades -->
     {{-- <div class="mb-6 p-4 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-700">
@@ -188,14 +174,13 @@
                     <table class="min-w-full bg-gray-50 border border-gray-200 rounded-md">
                         <thead>
                             <tr class="bg-gray-100">
-                                <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Estudiante</th>
+                                {{-- <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Estudiante</th> --}}
                                 <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Asistencia</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($asistenciasPorFecha as $asistencia)
                                 <tr class="border-b">
-                                    <td class="px-4 py-2 text-sm text-gray-800">{{ $asistencia->estudiante->alu_apellidos }}, {{ $asistencia->estudiante->alu_nombres }}</td>
                                     <td class="px-4 py-2 text-sm text-gray-800">
                                         @if($asistencia->asistencia == 'F')
                                             <span class="text-red-500">Falta</span>

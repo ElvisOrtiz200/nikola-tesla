@@ -12,7 +12,7 @@
                 <a href="{{route('estudiante-curso.create')}}" id="btn-registrar" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" aria-current="page" onclick="handleButtonClick(this, 'btn-registrar')">Registrar</a>
                 <a href="" id="btn-editar" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" onclick="handleButtonClick(this, 'btn-editar')">Editar</a>
                 <a href="" id="btn-projects" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" onclick="handleButtonClick(this, 'btn-projects')">Eliminar</a>
-                <a href="" id="btn-calendar" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" onclick="handleButtonClick(this, 'btn-calendar')">Listar</a>
+                <a href="{{route('estudiante-curso.listar')}}" id="btn-calendar" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 inline-flex items-center rounded-md py-2 px-3 text-sm font-medium" onclick="handleButtonClick(this, 'btn-calendar')">Listar</a>
             </nav>
             <div class="relative flex h-0 justify-between">
             </div>
@@ -25,7 +25,7 @@
                 <a href="{{route('estudiante-curso.create')}}" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" aria-current="page" onclick="handleButtonClick(this, 'btn-registrar')">Registrar</a>
                 <a href="" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" onclick="handleButtonClick(this, 'btn-editar')">Editar</a>
                 <a href="" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" onclick="handleButtonClick(this, 'btn-projects')">Eliminar</a>
-                <a href="" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" onclick="handleButtonClick(this, 'btn-calendar')">Listar</a>
+                <a href="{{route('estudiante-curso.listar')}}" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium" onclick="handleButtonClick(this, 'btn-calendar')">Listar</a>
               </div>
               <div class="border-t border-gray-700 pb-3 pt-4">
                 <div class="flex items-center px-4">

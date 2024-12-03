@@ -19,95 +19,127 @@ class BimestreController extends Controller
         return view('bimestre.crear');
     }
 
-    public function store(Request $request) {
-        //
+    public function store(Request $request)
+    {
         try {
-            $validator = FacadesValidator::make(request()->all(), [
-                'bim_sigla' => 'required',
-                'bim_descripcion' => 'required',
-                
+            // Validar los datos del formulario
+            $validator = FacadesValidator::make($request->all(), [
+                'bim_sigla' => 'required|max:3|unique:bimestre,bim_sigla',
+                'bim_descripcion' => 'required|max:15',
+                'anio' => 'nullable|digits:4|integer',
+                'fecha_inicio' => 'nullable|date',
+                'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
             ]);
+
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                $errorMessages = implode(' ', $validator->errors()->all());
+                return redirect()->route('bimestre.create')
+                    ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
             }
-            // dd($request);
+
+            // Crear y guardar el nuevo bimestre
             $bimestre = new Bimestre();
-            $bimestre->bim_sigla = request()->bim_sigla;
-           
-            $bimestre->bim_descripcion = request()->bim_descripcion;
-           
+            $bimestre->bim_sigla = $request->bim_sigla;
+            $bimestre->bim_descripcion = $request->bim_descripcion;
+            $bimestre->anio = $request->anio;
+            $bimestre->fecha_inicio = $request->fecha_inicio;
+            $bimestre->fecha_fin = $request->fecha_fin;
             $bimestre->save();
-            //dd($bimestre);
-            // Redirigir con cookie de éxito
+
+            // Redirigir con mensaje de éxito
             return redirect()->route('bimestre.create')
-                ->withCookie(cookie('success', 'bimestre registrado con éxito.', 1, '/', null, false, false));
+            ->withCookie(cookie('success', 'Bimestre registrado con éxito.', 1, '/', null, false, false));
         } catch (\Exception $e) {
-            // Manejar la excepción (puedes loguear el error o mostrar un mensaje)
-            // dd("hola");
-            return redirect()->route('bimestre.create')
-                ->withCookie(cookie('error', 'Error al registrar. Operación cancelada', 1));
+            // Manejo de errores
+           return redirect()->route('bimestre.create')
+            ->withCookie(cookie('error', $e, 1, '/', null, false, false));
         }
     }
  
-    public function show(Request $request){
+    public function show(Request $request)
+    {
         $query = Bimestre::query();
-
+    
+        // Búsqueda por descripción
         if ($request->has('search') && $request->search != '') {
             $query->where('bim_descripcion', 'like', '%' . $request->search . '%');
         }
-
-        $bimestres = $query->paginate(4); // Cambia esto para paginación
-
+    
+        // Paginación
+        $bimestres = $query->paginate(4);
+    
         return view('bimestre.editar', compact('bimestres'));
     }
-
+    
     public function editando($id)
     {
+        // Cargar el bimestre por la sigla
         $bimestre = Bimestre::findOrFail($id);
-
+    
         return view('bimestre.editando', compact('bimestre'));
     }
 
-
-    public function update(Request $request, $id) {
-
-        
-        $validator = FacadesValidator::make(request()->all(), [
-                'apo_dni' => 'required',
-                'apo_apellidos' => 'required',
-                'apo_nombres' => 'required',
-                'apo_direccion' => 'required',
-                'apo_telefono' => 'required',
+    public function update(Request $request, $id)
+{
+    try {
+        // Validar los datos del formulario
+        $validator = FacadesValidator::make($request->all(), [
+            'bim_sigla' => 'required|max:3|unique:bimestre,bim_sigla,' . $id . ',bim_sigla', // Excluye la sigla actual
+            'bim_descripcion' => 'required|max:15',
+            'anio' => 'nullable|digits:4|integer',
+            'fecha_inicio' => 'nullable|date',
+            'fecha_fin' => 'nullable|date|after_or_equal:fecha_inicio',
         ]);
 
-        $apoderado = Bimestre::findOrFail($id); 
-        $apoderado->apo_dni = $request->apo_dni;
-        $apoderado->apo_apellidos = $request->apo_apellidos;
-        $apoderado->apo_nombres = $request->apo_nombres;
-        $apoderado->apo_direccion = $request->apo_direccion;
-        $apoderado->apo_telefono = $request->apo_telefono;
-        $apoderado->save();
-    
-        return redirect()->route('apoderado.show') // Cambia a la ruta que desees
-        ->withCookie(cookie('success', 'Apoderado actualizado con éxito.', 1, '/', null, false, false));
+        if ($validator->fails()) {
+            $errorMessages = implode(' ', $validator->errors()->all());
+            return redirect()->route('bimestre.show', $id) // Cambia a la ruta que desees
+                ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
+        }
+
+        // Encontrar el bimestre por su ID
+        $bimestre = Bimestre::findOrFail($id);
+
+        // Actualizar los campos
+        $bimestre->bim_sigla = $request->bim_sigla;
+        $bimestre->bim_descripcion = $request->bim_descripcion;
+        $bimestre->anio = $request->anio;
+        $bimestre->fecha_inicio = $request->fecha_inicio;
+        $bimestre->fecha_fin = $request->fecha_fin;
+        $bimestre->save();
+
+        // Redirigir con mensaje de éxito
+        return redirect()->route('bimestre.show', $id) // Cambia a la ruta que desees
+            ->withCookie(cookie('success', 'Bimestre actualizado con éxito.', 1, '/', null, false, false));
+
+    } catch (\Exception $e) {
+        // Manejo de errores
+        return redirect()->route('bimestre.show', $id)
+            ->withCookie(cookie('error', 'Error al actualizar. Operación cancelada: ' . $e->getMessage(), 1, '/', null, false, false));
     }
+}
+
 
     public function delete(Request $request){
         $query = Bimestre::query();
-
+    
+        // Búsqueda por descripción
         if ($request->has('search') && $request->search != '') {
-            $query->where('apo_dni', 'like', '%' . $request->search . '%');
+            $query->where('bim_descripcion', 'like', '%' . $request->search . '%');
         }
-
-        $apoderado = $query->paginate(4); // Cambia esto para paginación
-
-        return view('apoderado.eliminar', compact('apoderado'));
+    
+        // Paginación
+        $bimestres = $query->paginate(4);
+    
+        return view('bimestre.eliminar', compact('bimestres'));
    }
 
    public function eliminando($id)
     {
-        $apoderado = Bimestre::findOrFail($id);
-        return view('apoderado.eliminando', compact('apoderado'));
+        // Cargar el bimestre por la sigla
+        $bimestre = Bimestre::findOrFail($id);
+    
+        return view('bimestre.eliminando', compact('bimestre'));
     }
 
     public function destroy(string $id){

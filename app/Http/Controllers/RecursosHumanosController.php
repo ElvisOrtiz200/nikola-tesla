@@ -27,14 +27,16 @@ class RecursosHumanosController extends Controller
                 'per_cargo' => 'required',
                 'per_fecha_inicio' => 'required|date_format:Y-m-d',
                 'per_fecha_fin' => 'required|date_format:Y-m-d',
-                'per_dni' => 'required|digits:8',  // Si el DNI tiene 8 dígitos
-                'per_telefono' => 'required',
+                'per_dni' => 'required|digits:8|unique:rrhh_personal,per_dni', // Validar DNI único
+                 'per_telefono' => 'required|string|max:50|unique:rrhh_personal,per_telefono',
                 'per_direccion' => 'required'
             ]);
             
             // Si la validación falla
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                $errorMessages = implode(' ', $validator->errors()->all());
+                return redirect()->route('recursoshh.create')
+                    ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
             }
             
             // Crear nuevo recurso humano
@@ -92,15 +94,17 @@ class RecursosHumanosController extends Controller
                 'per_cargo' => 'required',
                 'per_fecha_inicio' => 'required|date_format:Y-m-d',
                 'per_fecha_fin' => 'required|date_format:Y-m-d',
-                'per_dni' => 'required|digits:8',  // Si el DNI tiene 8 dígitos
-                'per_telefono' => 'required',
+                'per_dni' => 'required|digits:8|unique:rrhh_personal,per_dni,' . $id . ',per_id', // Excluir el DNI del registro actual
+                'per_telefono' => 'required|string|max:50|unique:rrhh_personal,per_telefono,' . $id . ',per_id', // Excluir el teléfono del registro actual
                 'per_direccion' => 'required',
                 'per_estado' => 'required'
             ]);
     
             // Si la validación falla
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                $errorMessages = implode(' ', $validator->errors()->all());
+                return redirect()->route('recursoshh.show', $id) // Usamos 'edit' en lugar de 'create'
+                    ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
             }
     
             // Buscar el recurso humano por ID
@@ -129,7 +133,7 @@ class RecursosHumanosController extends Controller
         } catch (\Exception $e) {
             // Log del error y redirigir con mensaje de error
     
-            return redirect()->route('recursoshh.edit', $id)
+            return redirect()->route('recursoshh.show', $id)
                 ->withCookie(cookie('error', 'Error al actualizar. Operación cancelada: ' . $e->getMessage(), 1));
         }
     }
@@ -166,4 +170,19 @@ class RecursosHumanosController extends Controller
     return redirect()->back()->with('error', 'Registro no encontrado.');
     }
 
+
+    public function listar(Request $request)
+    {
+        // Obtener el valor del buscador
+        $search = $request->input('search');
+
+        // Realizar la consulta
+        $personales = RecursosHumanos::when($search, function ($query, $search) {
+            return $query->where('per_dni', 'like', '%' . $search . '%')
+                         ->orWhere('per_apellidos', 'like', '%' . $search . '%');
+        })->paginate(10); // Paginación con 10 registros por página
+
+        // Retornar la vista con los resultados
+        return view('recursoHumano.listar', compact('personales', 'search'));
+    }
 }

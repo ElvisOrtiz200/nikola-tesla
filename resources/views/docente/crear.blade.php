@@ -1,6 +1,6 @@
 @extends('docente.index')
 
- 
+  
 
 @section('subcontent')
 
@@ -21,67 +21,126 @@
 @endif
 
 
+@if (request()->cookie('error'))
+<div id="alert" class="fixed top-4 right-4 z-50 flex w-full max-w-sm overflow-hidden bg-red-500 rounded-lg shadow-md dark:bg-red-700" style="display: flex;">
+    <div class="flex items-center justify-center w-12 bg-red-600">
+        <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 3.33331C10.8 3.33331 3.33337 10.8 3.33337 20C3.33337 29.2 10.8 36.6666 20 36.6666C29.2 36.6666 36.6667 29.2 36.6667 20C36.6667 10.8 29.2 3.33331 20 3.33331ZM16.6667 28.3333L8.33337 20L10.6834 17.65L16.6667 23.6166L29.3167 10.9666L31.6667 13.3333L16.6667 28.3333Z" />
+        </svg>
+    </div>
+    <div class="px-4 py-2 -mx-3">
+        <div class="mx-3">
+            <span class="font-semibold text-white">¡Error!</span>
+            <p class="text-sm text-white">{{ request()->cookie('error') }}</p>
+        </div>
+    </div>
+</div>
+@endif 
+
 
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Registrar docente</h2>
 
-    <form id="rolCrear" action="{{route('docente.store')}}" method="POST">
-
-      
-
-
+    <form id="rolCrear" action="{{route('docente.store')}}" method="POST" onsubmit="return validarFormulario()">
 
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-           
-            <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-                <div class="relative group">
-                  <button type="button" id="dropdown-button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
-                    <span class="mr-2">DNI del personal</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 -mr-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fill-rule="evenodd" d="M6.293 9.293a1 1 0 011.414 0L10 11.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                  </button>
-                  <div id="dropdown-menu" class="hidden absolute right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
-                    <!-- Search input -->
-                    <input id="search-input" name="per_id" class="block w-full px-4 py-2 text-gray-800 border rounded-md border-gray-300 focus:outline-none" type="text" placeholder="Buscar DNI" autocomplete="off">
-                    
-                    <!-- Dropdown content goes here -->
-                    @foreach($rrhh as $personal)
-                    <a href="javascript:void(0);" 
-                        id="valor"
-                       class="dropdown-items block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md"
-                       data-id="{{ $personal->per_id }}" data-dni="{{ $personal->per_id }}">
-                       {{ $personal->per_dni }}
-                    </a>
-                    @endforeach
-                  </div>
-                </div>
-            </div>
-      
-            
 
+            <!-- DNI del personal -->
+            <div class="relative group">
+                <label class="text-gray-700 dark:text-gray-200" for="per_id">DNI del personal</label>
+                <select id="search-input" name="per_id" class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="" disabled selected>Seleccione un DNI</option>
+                    @foreach($rrhh as $personal)
+                        <option value="{{ $personal->per_id }}">{{ $personal->per_dni }} - {{ $personal->per_apellidos }}</option>
+                    @endforeach
+                </select>
+                <div id="search-input" class="text-red-500 text-sm mt-1 hidden"></div>
+            </div>
+            
+        
+            <!-- Especialidad -->
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="doc_especialidad">Especialidad</label>
-                <input id="doc_especialidad" name="doc_especialidad" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <input id="doc_especialidad" name="doc_especialidad" type="text" 
+                    class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="error-doc_especialidad" class="text-red-500 text-sm mt-1 hidden"></div>
             </div>
-
+        
+            <!-- Nivel Educativo -->
             <div>
-                <label class="text-gray-700 dark:text-gray-200" for="doc_nivel_educativo">Nivel educativo</label>
-                <input id="doc_nivel_educativo" name="doc_nivel_educativo" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <label class="text-gray-700 dark:text-gray-200" for="doc_nivel_educativo">Nivel Educativo</label>
+                <input id="doc_nivel_educativo" name="doc_nivel_educativo" type="text" 
+                    class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="error-doc_nivel_educativo" class="text-red-500 text-sm mt-1 hidden"></div>
             </div>
-
-                            
-            <div id="date-range-picker" class="flex items-center">
-                <div class="relative">
-                    <input id="datepicker-individiual" name="doc_fecha_nac"  type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Fecha de nacimiento">
-                </div>
-                
+        
+            <!-- Fecha de Nacimiento -->
+            <div>
+                <label class="text-gray-700 dark:text-gray-200" for="datepicker-individiual">Fecha de Nacimiento</label>
+                <input id="datepicker-individiual" name="doc_fecha_nac" type="text" 
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                    placeholder="YYYY-MM-DD">
+                <div id="error-datepicker-individiual" class="text-red-500 text-sm mt-1 hidden"></div>
             </div>
-
-             
-
+        
         </div>
+        
 
+        <script>
+            function validarFormulario() {
+                let valid = true;
+        
+                // Limpiar mensajes de error anteriores
+                const errorDivs = document.querySelectorAll('.text-red-500');
+                errorDivs.forEach(div => div.classList.add('hidden'));
+        
+                // Validación del DNI del personal (Debe seleccionarse un valor)
+                const perId = document.getElementById('search-input').value;
+                if (!perId || perId.trim() === "") {
+                    mostrarError('El DNI del personal es obligatorio.', 'search-input');
+                    valid = false;
+                }
+        
+                // Validación de Especialidad (campo obligatorio)
+                const docEspecialidad = document.getElementById('doc_especialidad').value;
+                if (!docEspecialidad || docEspecialidad.trim() === "") {
+                    mostrarError('La especialidad es obligatoria.', 'doc_especialidad');
+                    valid = false;
+                }
+        
+                // Validación de Nivel Educativo (campo obligatorio)
+                const docNivelEducativo = document.getElementById('doc_nivel_educativo').value;
+                if (!docNivelEducativo || docNivelEducativo.trim() === "") {
+                    mostrarError('El nivel educativo es obligatorio.', 'doc_nivel_educativo');
+                    valid = false;
+                }
+        
+                // Validación de Fecha de Nacimiento (campo obligatorio y formato válido)
+                const docFechaNac = document.getElementById('datepicker-individiual').value;
+                const fechaRegex = /^\d{4}-\d{2}-\d{2}$/; // Formato YYYY-MM-DD
+                if (!docFechaNac || !fechaRegex.test(docFechaNac)) {
+                    mostrarError('La fecha de nacimiento es obligatoria y debe estar en formato válido (YYYY-MM-DD).', 'datepicker-individiual');
+                    valid = false;
+                }
+        
+                return valid;
+            }
+        
+            // Función para mostrar errores dinámicamente
+            function mostrarError(mensaje, campoId) {
+                let errorDiv = document.getElementById(`error-${campoId}`);
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.id = `error-${campoId}`;
+                    errorDiv.classList.add('text-red-500', 'text-sm', 'mt-1');
+                    const campo = document.getElementById(campoId);
+                    campo.parentNode.appendChild(errorDiv);
+                }
+                errorDiv.textContent = mensaje;
+                errorDiv.classList.remove('hidden');
+            }
+        </script>
+        
         <div class="flex justify-end mt-6">
             <button id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600" type="button">Registrar</button>
         </div>
@@ -151,13 +210,11 @@
 setTimeout(() => {
     const alert = document.getElementById('alert');
     if (alert) {
-        // Ocultar el mensaje
         alert.style.display = 'none';
-        
-        // Eliminar la cookie 'success' después de ocultar el mensaje
-        deleteCookie('success');
+        deleteCookie('success'); // Borrar cookie de éxito
+        deleteCookie('error');   // Borrar cookie de error
     }
-}, 2000);
+}, 3000);
 </script>
 <script>
     // JavaScript to toggle the dropdown
@@ -229,19 +286,17 @@ setTimeout(() => {
     const cancelButton = document.getElementById('cancelButton');
     const confirmButton = document.getElementById('confirmButton');
     
-    
-     // Lógica cuando se confirma el registro
-     confirmButton.addEventListener('click', () => {
-        // Aquí puedes proceder con el registro, por ejemplo, enviando el formulario
+    registerButton.addEventListener('click', function () {
+    if (validarFormulario()) {     
+        confirmModal.classList.remove('hidden');    
+    }
+    });
+
+    confirmButton.addEventListener('click', () => {
+
         document.getElementById('rolCrear').submit();
     });
 
-    // Mostrar el modal cuando se hace clic en "Registrar"
-    registerButton.addEventListener('click', () => {
-        confirmModal.classList.remove('hidden');
-    });
-
-    // Ocultar el modal cuando se hace clic en "Cancelar"
     cancelButton.addEventListener('click', () => {
         confirmModal.classList.add('hidden');
     });

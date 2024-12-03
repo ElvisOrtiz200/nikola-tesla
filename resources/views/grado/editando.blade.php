@@ -5,21 +5,17 @@
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Editar</h2>
 
-    <form id="roledit" action="{{ route('grado.update', $grados->id_grado) }}" method="POST">
+    <form id="roledit" action="{{ route('grado.update', $grados->id_grado) }}" method="POST" onsubmit="return validarFormulario()">
         @csrf
     @method('PUT') 
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-            
             <div>
-
-                <input id="apo_dni" name="id_grado" value="{{ $grados->id_grado }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring" readonly>
+                <label class="text-gray-700 dark:text-gray-200" for="nombre">Nombre del grado</label>
+                <input id="nombre" name="nombre" value="{{ $grados->nombre }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorNombre" class="mt-2 text-sm text-red-500 hidden"></div>
             </div>
-        
-            <div>
-                <input id="apo_apellidos" name="nombre" value="{{ $grados->nombre }}" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
-            </div>
- 
-            <div class="relative group">
+           
+            <div class="relative group"> <label class="text-gray-700 dark:text-gray-200">Nombre del nivel</label>
                 <button type="button" id="dropdown-button" class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
                   <span class="mr-2">Nivel</span>
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 -mr-1" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -45,16 +41,35 @@
               </div>
             
 
-
+              <script>
+                function validarFormulario() {
+                    var valid = true;
+            
+                    // Limpiar mensaje de error previo
+                    var errorDiv = document.getElementById('errorNombre');
+                    errorDiv.classList.add('hidden');
+                    errorDiv.textContent = '';
+            
+                    // Validación del campo 'nombre' (solo letras y espacios)
+                    var nombre = document.getElementById('nombre').value;
+                    var regexNombre = /^[A-Za-záéíóúÁÉÍÓÚÑñ0-9\s]+$/;
+                    if (!nombre || !regexNombre.test(nombre)) {
+                        errorDiv.textContent = "El nombre solo puede contener letras y espacios.";
+                        errorDiv.classList.remove('hidden');
+                        valid = false;
+                    }
+            
+                    return valid;
+                }
+            </script>
         </div>
-        
 
-        <div class="flex justify-end mt-6">
+        <div class="flex  mt-6 justify-center">
             <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
                 <a href="{{route('grado.show')}}" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600" >Regresar</a>
             
 
-                <a id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600 cursor-pointer" >Actualizar</a>
+                <button id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600 cursor-pointer" type="button" >Actualizar</button>
             </div>
             
         </div>
@@ -114,26 +129,23 @@
     </div>
 </section>
 
-
 <script>
     const registerButton = document.getElementById('registerButton');
     const confirmModal = document.getElementById('confirmModal');
     const cancelButton = document.getElementById('cancelButton');
     const confirmButton = document.getElementById('confirmButton');
     
-    
-     // Lógica cuando se confirma el edit
-     confirmButton.addEventListener('click', () => {
-        // Aquí puedes proceder con el registro, por ejemplo, enviando el formulario
-        document.getElementById('roledit').submit();
+    registerButton.addEventListener('click', function () {
+    if (validarFormulario()) {     
+        confirmModal.classList.remove('hidden');    
+    }
     });
 
-    // Mostrar el modal cuando se hace clic en "Registrar"
-    registerButton.addEventListener('click', () => {
-        confirmModal.classList.remove('hidden');
+    confirmButton.addEventListener('click', () => {
+
+        document.getElementById('rolCrear').submit();
     });
 
-    // Ocultar el modal cuando se hace clic en "Cancelar"
     cancelButton.addEventListener('click', () => {
         confirmModal.classList.add('hidden');
     });

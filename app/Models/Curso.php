@@ -15,6 +15,12 @@ class Curso extends Model
         'acu_estado',
         'id_grado'
     ];
+
+    public function grado()
+{
+    return $this->belongsTo(Grado::class, 'id_grado');
+}
+
     public $timestamps = false; 
 
     public function Horario()

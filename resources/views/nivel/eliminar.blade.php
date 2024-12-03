@@ -8,7 +8,7 @@
       </svg>
       <input
           class="block w-full appearance-none bg-transparent text-base text-gray-700 placeholder:text-gray-400 focus:outline-none sm:text-sm sm:leading-6"
-          placeholder="Buscar por DNI de apoderado"
+          placeholder="Buscar por nivel"
           name="search"
           oninput="this.form.submit()"
           aria-label="Search components"

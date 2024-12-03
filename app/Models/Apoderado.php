@@ -18,4 +18,9 @@ class Apoderado extends Model
         'apo_telefono',
     ];
     public $timestamps = false;
+
+    public function estudiantes()
+    {
+        return $this->hasMany(Estudiante::class, 'apo_dni', 'apo_dni');
+    }
 }

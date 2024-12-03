@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator as FacadesValidator;
 use App\Models\Nivel;
 use App\Models\Grado;
 
-
+ 
 
 class GradoController extends Controller
 {
@@ -18,8 +18,8 @@ class GradoController extends Controller
 
     public function create()
     {
-        $nivel = Nivel::all();
-        return view('grado.crear',compact('nivel'));
+        $niveles = Nivel::all();
+        return view('grado.crear',compact('niveles'));
     }
 
 
@@ -48,20 +48,22 @@ class GradoController extends Controller
                 ->withCookie(cookie('error', 'Error al registrar. Operación cancelada', 1));
         }
     }
+ 
+    public function show(Request $request)
+{
+    // Inicializa la consulta base
+    $query = Grado::query();  // Usar query() en lugar de all()
 
-    public function show(Request $request){
-        $query =Grado::with('nivel'); 
-    
-        if ($request->has('search') && $request->search != '') {
-            $query->whereHas('nivel', function($q) use ($request) {
-                $q->where('nombre', 'like', '%' . $request->search . '%');
-            });
-        }
-    
-        $grado = $query->paginate(4); // Cambia esto para paginación
-    
-        return view('grado.editar', compact('grado'));
-        }
+    // Agregar el filtro si el parámetro 'search' existe
+    if ($request->has('search') && !empty($request->search)) {
+        $query->where('nombre', 'like', '%' . $request->search . '%'); // Filtrar solo por el nombre del grado
+    }
+
+    // Paginación
+    $grado = $query->paginate(4);  // Realiza la paginación
+
+    return view('grado.editar', compact('grado')); 
+}
 
 public function editando($id,Request $request)
     {
@@ -112,19 +114,15 @@ public function editando($id,Request $request)
 
     
     public function delete(Request $request){
-        $query =Grado::with('nivel'); 
-    
-        // if ($request->has('search') && $request->search != '') {
-        //     $query->whereHas('nivel', function($q) use ($request) {
-        //         $q->where('nombre', 'like', '%' . $request->search . '%');
-        //     });
-        // }
+        $query = Grado::query();  // Usar query() en lugar de all()
 
-        if ($request->has('search') && $request->search != '') {
-            $query->where('nombre', 'like', '%' . $request->search . '%');
-        }
-    
-        $grado = $query->paginate(4); // Cambia esto para paginación
+    // Agregar el filtro si el parámetro 'search' existe
+    if ($request->has('search') && !empty($request->search)) {
+        $query->where('nombre', 'like', '%' . $request->search . '%'); // Filtrar solo por el nombre del grado
+    }
+
+    // Paginación
+    $grado = $query->paginate(4);  // Realiza la paginación
     
         return view('grado.eliminar', compact('grado')); 
    }
@@ -151,6 +149,24 @@ public function editando($id,Request $request)
         ->withCookie(cookie('success', 'Grado eliminado con éxito.', 1, '/', null, false, false));
     }
     return redirect()->back()->with('error', 'Registro no encontrado.');
+    }
+
+
+
+    public function listar(Request $request)
+    {
+        // Crear una consulta básica
+        $query = Grado::with('nivel');
+
+        // Si se ha enviado el parámetro de búsqueda, agregar el filtro
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('nombre', 'like', '%' . $request->search . '%');
+        }
+
+        // Paginación de 10 elementos por página (ajustable según tus necesidades)
+        $grados = $query->paginate(10);
+
+        return view('grado.listar', compact('grados'));
     }
 }
  

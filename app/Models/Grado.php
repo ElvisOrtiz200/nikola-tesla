@@ -34,5 +34,8 @@ class Grado extends Model
         return $this->hasMany(Horario::class,'id_grado');
     }
     public $timestamps = false;
-    
+    public function horarios()
+    {
+        return $this->hasMany(Horario::class);
+    }
 }

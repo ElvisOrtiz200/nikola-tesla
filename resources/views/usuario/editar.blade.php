@@ -3,17 +3,17 @@
 
 
 @section('subcontent')
-<form action="" method="GET" id="searchForm">
+<form action="{{route('usuario.show')}}" method="GET" id="searchForm">
   <div class="flex items-center px-3.5 py-2 text-gray-400 group hover:ring-1 hover:ring-gray-300 focus-within:!ring-2 ring-inset focus-within:!ring-teal-500 rounded-md">
       <svg class="mr-2 h-5 w-5 stroke-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
       </svg>
       <input
           class="block w-full appearance-none bg-transparent text-base text-gray-700 placeholder:text-gray-400 focus:outline-none sm:text-sm sm:leading-6"
-          placeholder="Buscar por nombre de usuario"
+          placeholder="Buscar por nombre de usuario o correo"
           name="search"
-          oninput="this.form.submit()"
-          aria-label="Search components"
+          id="searchInput"
+          aria-label="Search users"
           value="{{ request()->query('search') }}"
           style="caret-color: rgb(107, 114, 128)"
       />
@@ -31,6 +31,21 @@
         <div class="mx-3">
             <span class="font-semibold text-emerald-500 dark:text-emerald-400">Exito!</span>
             <p class="text-sm text-gray-600 dark:text-gray-200">{{ request()->cookie('success') }}</p>
+        </div>
+    </div>
+</div>
+@endif
+@if (request()->cookie('error'))
+<div id="alert" class="fixed top-4 right-4 z-50 flex w-full max-w-sm overflow-hidden bg-red-500 rounded-lg shadow-md dark:bg-red-700" style="display: flex;">
+    <div class="flex items-center justify-center w-12 bg-red-600">
+        <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 3.33331C10.8 3.33331 3.33337 10.8 3.33337 20C3.33337 29.2 10.8 36.6666 20 36.6666C29.2 36.6666 36.6667 29.2 36.6667 20C36.6667 10.8 29.2 3.33331 20 3.33331ZM16.6667 28.3333L8.33337 20L10.6834 17.65L16.6667 23.6166L29.3167 10.9666L31.6667 13.3333L16.6667 28.3333Z" />
+        </svg>
+    </div>
+    <div class="px-4 py-2 -mx-3">
+        <div class="mx-3">
+            <span class="font-semibold text-white">¡Error!</span>
+            <p class="text-sm text-white">{{ request()->cookie('error') }}</p>
         </div>
     </div>
 </div>
@@ -126,12 +141,27 @@
 setTimeout(() => {
     const alert = document.getElementById('alert');
     if (alert) {
-        // Ocultar el mensaje
         alert.style.display = 'none';
-        
-        // Eliminar la cookie 'success' después de ocultar el mensaje
-        deleteCookie('success');
+        deleteCookie('success'); // Borrar cookie de éxito
+        deleteCookie('error');   // Borrar cookie de error
     }
-}, 2000);
+}, 3000);
+</script>
+
+
+
+
+
+<script>
+  // Filtrar tabla al escribir en el buscador
+  document.getElementById('search').addEventListener('keyup', function() {
+      const query = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#userTable tr');
+
+      rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(query) ? '' : 'none';
+      });
+  });
 </script>
 @endsection

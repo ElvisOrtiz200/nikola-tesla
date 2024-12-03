@@ -22,6 +22,23 @@
 
  
 
+@if (request()->cookie('error'))
+<div id="alert" class="fixed top-4 right-4 z-50 flex w-full max-w-sm overflow-hidden bg-red-500 rounded-lg shadow-md dark:bg-red-700" style="display: flex;">
+    <div class="flex items-center justify-center w-12 bg-red-600">
+        <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 3.33331C10.8 3.33331 3.33337 10.8 3.33337 20C3.33337 29.2 10.8 36.6666 20 36.6666C29.2 36.6666 36.6667 29.2 36.6667 20C36.6667 10.8 29.2 3.33331 20 3.33331ZM16.6667 28.3333L8.33337 20L10.6834 17.65L16.6667 23.6166L29.3167 10.9666L31.6667 13.3333L16.6667 28.3333Z" />
+        </svg>
+    </div>
+    <div class="px-4 py-2 -mx-3">
+        <div class="mx-3">
+            <span class="font-semibold text-white">¡Error!</span>
+            <p class="text-sm text-white">{{ request()->cookie('error') }}</p>
+        </div>
+    </div>
+</div>
+@endif  
+
+
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Registrar horario</h2>
 
@@ -29,14 +46,13 @@
         @csrf
         <input type="hidden" name="horarios" id="horarios-json">
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-1">
-            <div class="w-full max-w-xs">
-                <label for="example-select1" class="block text-sm font-medium text-gray-700 mb-2">Selecciona una grado:</label>
-                <select id="example-select1" name="id_grado" class="block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700 p-3 transition duration-200 ease-in-out">
-                    @foreach ($grado as $itemgrado)
-                        <option value="{{$itemgrado->id_grado}}">{{$itemgrado->grado}} {{$itemgrado->nivel}}</option>
-                    @endforeach
-                </select>
-            </div>
+            <select id="example-select1" name="id_grado" class="block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700 p-3 transition duration-200 ease-in-out">
+                <option value="">Selecciona un grado</option>
+                @foreach ($grado as $itemgrado)
+                    <option value="{{$itemgrado->id_grado}}">{{$itemgrado->grado}} {{$itemgrado->nivel}}</option>
+                @endforeach
+            </select>
+            
         </div>
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-3 border p-2">
             
@@ -62,20 +78,14 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-1">
-                <div class="w-full max-w-xs">
-                    <label for="example-select4" class="block text-sm font-medium text-gray-700 mb-2">Selecciona una curso:</label>
-                    <select id="example-select4" name="idHora" class="block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700 p-3 transition duration-200 ease-in-out">
-                        @foreach ($cursos as $itemcursos)
-                            <option value="{{$itemcursos->acu_id}}">{{$itemcursos->acu_nombre}} </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
+            <select id="example-select4" name="idHora" class="block w-full bg-white border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-gray-700 p-3 transition duration-200 ease-in-out">
+                <option value="">Selecciona un curso</option>
+            </select>
+            
         </div>
 
         <div class="flex justify-end mt-6">
-            <button id="addButton" class="px-4 py-2 leading-5 text-white bg-blue-600 rounded-md hover:bg-blue-500" type="button">Agregar</button>
+            <button id="addButton" disabled class="px-4 py-2 leading-5 text-white bg-blue-600 rounded-md hover:bg-blue-500" type="button">Agregar</button>
         </div>
 
         <div id="scheduleGrid" class="grid grid-cols-1 sm:grid-cols-6 gap-2 mt-6 border-t border-gray-300 pt-4">
@@ -167,7 +177,7 @@
         </div>
         
         <div class="flex justify-end mt-6">
-            <button id="registerButton" class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600" type="button">Registrar</button>
+            <button id="registerButton" disabled class="px-8 py-2.5 leading-5 text-white transition-colors duration-300 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600" type="button">Registrar</button>
         </div>
         
     </form>
@@ -238,7 +248,8 @@ setTimeout(() => {
         alert.style.display = 'none';
         
         // Eliminar la cookie 'success' después de ocultar el mensaje
-        deleteCookie('success');
+        deleteCookie('success'); // Borrar cookie de éxito
+        deleteCookie('error');
     }
 }, 2000);
 </script>
@@ -278,25 +289,25 @@ setTimeout(() => {
             console.log(selectElement1);
             let diaSeleccionado;
             switch (selectElement1) {
-                case '11':
+                case '1':
                 diaSeleccionado = "Lunes";
                     break;
-                case '12':
+                case '2':
                 diaSeleccionado = "Martes";
                     break;
-                case '13':
+                case '3':
                 diaSeleccionado = "Miercoles";
                     break;
-                case '14':
+                case '4':
                 diaSeleccionado = "Jueves";
                     break;
-                case '15':
+                case '5':
                 diaSeleccionado = "Viernes";
                     break;
-                case '16':
+                case '6':
                 diaSeleccionado = "Sabado";
                     break;
-                case '17':
+                case '7':
                 diaSeleccionado = "Domingo";
                     break;
                 default:
@@ -397,25 +408,25 @@ setTimeout(() => {
         let idDiaSemana;
         switch (cell.getAttribute('data-day')) {
             case 'Lunes':
-                idDiaSemana = 11;
+                idDiaSemana = 1;
                 break;
             case 'Martes':
-                idDiaSemana = 12;
+                idDiaSemana = 2;
                 break;
             case 'Miercoles':
-                idDiaSemana = 13;
+                idDiaSemana = 3;
                 break;
             case 'Jueves':
-                idDiaSemana = 14;
+                idDiaSemana = 4;
                 break;
             case 'Viernes':
-                idDiaSemana = 15;
+                idDiaSemana = 5;
                 break;
             case 'Sabado':
-                idDiaSemana = 16;
+                idDiaSemana = 6;
                 break;
             case 'Domingo':
-                idDiaSemana = 17;
+                idDiaSemana = 7;
                 break;
             default:
                 console.error("Día no válido");
@@ -483,33 +494,55 @@ setTimeout(() => {
 
     // Enviar el formulario
     document.getElementById('scheduleForm').submit();
-    // // Enviar la solicitud al servidor
-    // fetch('/horario/crear/creado', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-    //     },
-    //     body: JSON.stringify({ horarios }),
-    // })
-    // .then(response => {
-    //     if (!response.ok) {
-    //         throw new Error(`HTTP error! status: ${response.status}`);
-    //     }
-    //     return response.json();
-    // })
-    // .then(data => {
-    //     console.log('Respuesta del servidor:', data);
-    //     alert('Horario registrado exitosamente.');
-    // })
-    // .catch(error => {
-    //     console.error('Error al enviar los datos:', error);
-    //     alert('Hubo un error al registrar el horario.');
-    // });
+
 });
 
 </script>
-    
-   
+<script>
+    $(document).ready(function() {
+    $('#example-select1').change(function() {
+        var gradoId = $(this).val();
+
+        // Usando el nombre de la ruta
+        var url = '{{ route("get.cursos", ":gradoId") }}';
+        url = url.replace(':gradoId', gradoId); // Reemplaza el parámetro con el id del grado
+
+        // Realiza la solicitud AJAX con la URL generada
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function(data) {
+                // Aquí manejas la respuesta, por ejemplo, llenando el select de cursos
+                var select = $('#example-select4');
+                select.empty(); // Limpia las opciones actuales
+
+                data.forEach(function(curso) {
+                    select.append('<option value="' + curso.acu_id + '">' + curso.acu_nombre + '</option>');
+                });
+            },
+            error: function() {
+                alert('Error al cargar los cursos');
+            }
+        });
+    });
+});
+
+</script>
+
+<script>
+    $(document).ready(function() {
+    // Al cambiar el grado seleccionado
+    $('#example-select1').change(function() {
+        document.getElementById('registerButton').removeAttribute('disabled');
+        document.getElementById('addButton').removeAttribute('disabled');
+
+        // Limpiar las celdas del horario
+        $('#scheduleGrid .schedule-cell').each(function() {
+            $(this).empty(); // Esto vacía el contenido de cada celda
+        });
+    });
+});
+
+</script>
 
 @endsection

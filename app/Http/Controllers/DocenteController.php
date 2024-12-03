@@ -32,7 +32,7 @@ class DocenteController extends Controller
                 'doc_fecha_nac' => 'required',
                  
             ]);
-            
+            // dd($request);
             if ($validator->fails()) {
                 return response()->json($validator->errors()->toJson(), 400);
             }
@@ -58,16 +58,18 @@ class DocenteController extends Controller
 
 
     public function show(Request $request){
-    $query = Docente::with('recursoshh'); 
+   // Construimos la consulta base
+   $query = Docente::with('recursoshh'); // 'recursoshh' es la relación con rrhh_personal
 
-    if ($request->has('search') && $request->search != '') {
-        $query->whereHas('recursoshh', function($q) use ($request) {
-            $q->where('per_dni', 'like', '%' . $request->search . '%');
-        });
-    }
+   // Filtrar por búsqueda (DNI de personal asociado)
+   if ($request->has('search') && $request->search != '') {
+       $query->whereHas('recursoshh', function ($q) use ($request) {
+           $q->where('per_dni', 'like', '%' . $request->search . '%');
+       });
+   }
 
-    $docente = $query->paginate(4); // Cambia esto para paginación
-
+   // Paginación o ejecución de consulta
+   $docente = $query->paginate(10); // Cambia el número según la cantidad que 
     return view('docente.editar', compact('docente'));
     }
 
@@ -163,6 +165,26 @@ class DocenteController extends Controller
         ->withCookie(cookie('success', 'Docente eliminado con éxito.', 1, '/', null, false, false));
     }
     return redirect()->back()->with('error', 'Registro no encontrado.');
+    }
+
+
+    public function listar(Request $request)
+    {
+        // Buscar por nombre, DNI o especialidad
+        $search = $request->input('search');
+
+        $docentes = Docente::with('recursoshh')
+            ->when($search, function ($query, $search) {
+                $query->whereHas('recursoshh', function ($q) use ($search) {
+                    $q->where('per_dni', 'like', '%' . $search . '%')
+                      ->orWhere('per_nombre', 'like', '%' . $search . '%');
+                })
+                ->orWhere('doc_especialidad', 'like', '%' . $search . '%');
+            })
+            ->orderBy('doc_id', 'asc')
+            ->paginate(10);
+
+        return view('docente.listar', compact('docentes', 'search'));
     }
 
 

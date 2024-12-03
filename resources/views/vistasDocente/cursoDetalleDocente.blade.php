@@ -1,47 +1,206 @@
 @extends('vistasDocente.cursoxDocentes')
 
-
-
 @section('subcontent')
-{{-- MODAL PARA LA SECTION DE ANUNCIOS --}}
-<div id="modalRegistrarAnuncio" class="hidden fixed inset-0 z-50 flex justify-center items-center  bg-black bg-opacity-50">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md ">
+@php
+    $data = [
+
+        'acdo_id_value' => $acdo_id_value,
+    ];
+
+    // Verificar si alguna variable tiene valor nulo o vacío
+    $hasEmptyData = collect($data)->contains(function ($value) {
+        return is_null($value) || 
+               (is_object($value) && method_exists($value, 'isEmpty') && $value->isEmpty()) || 
+               (is_array($value) && empty($value)) || 
+               ($value === 'vacio'); // Para detectar valores asignados como 'vacio'
+    });
+@endphp
+
+@if($hasEmptyData)
+        <!-- Mostrar un mensaje de advertencia si hay datos vacíos -->
+        <div class="p-4 mb-4 bg-yellow-100 text-yellow-800 rounded">
+            <strong>Error:</strong> El curso al que a sido asignado, no cuenta con estudiantes registrado. Por favor espere a la asignacion de estudiantes o pongase en contacto con soporte.
+        </div>
+@else
+
+
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+{{-- ANUNCIOSmodal --}}
+    
+    <div class="flex justify-between items-center">
+        <button onclick="openModal({{ $curso->acu_id }})" class="text-gray-600 hover:text-gray-800">
+            <h3 class="text-2xl font-semibold text-gray-800">Registrar Anuncio</h3>
+        </button>
+    </div>
+    
+    {{-- MODAL PARA LA SECCIÓN DE ANUNCIOS --}}
+    <div id="modalRegistrarAnuncio" class="hidden fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <!-- Encabezado del Modal -->
+            <div class="flex justify-between items-center">
+                <h3 class="text-2xl font-semibold text-gray-800">Registrar Anuncio</h3>
+                <button onclick="closeModal1()" class="text-gray-600 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Formulario para registrar un anuncio -->
+            <form action="{{ route('docentesAnuncios.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="id_curso" id="id_curso" value="{{ $curso->acu_id }}">
+    
+                <!-- Título del anuncio -->
+                <div class="mt-4">
+                    <label for="titulo" class="block text-gray-700 font-medium">Título</label>
+                    <input type="text" name="titulo" id="titulo" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ingrese el título" required>
+                </div>
+    
+                <!-- Descripción del anuncio -->
+                <div class="mt-4">
+                    <label for="descripcion" class="block text-gray-700 font-medium">Descripción</label>
+                    <textarea name="descripcion" id="descripcion" rows="4" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ingrese la descripción" required></textarea>
+                </div>
+    
+                <!-- Botones de acción -->
+                <div class="mt-6 flex justify-end space-x-4">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+
+
+{{-- MODAL PARA EDITAR UNA ANUNCIO DENTRO DE SECTION ANUNCIOS --}}
+
+<div id="modalEditarAnuncio" class="hidden fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
         <!-- Encabezado del Modal -->
         <div class="flex justify-between items-center">
-            <h3 class="text-2xl font-semibold text-gray-800">Registrar Anuncio</h3>
-            <button onclick="closeModal()" class="text-gray-600 hover:text-gray-800">
+            <h3 class="text-2xl font-semibold text-gray-800">Editar Anuncio</h3>
+            <button onclick="closeModalEdicionAnuncio()" class="text-gray-600 hover:text-gray-800">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
 
-        <!-- Formulario para registrar un anuncio -->
-        <form action="{{route('docentesAnuncios.store')}}" method="POST">
+        <!-- Formulario para editar un anuncio 
+          const url = "{{ route('docentesAnuncios.update', ':id') }}".replace(':id', anuncioId);
+        document.getElementById('editAnuncioForm').action = url;
+        -->
+        <form id="editAnuncioForm" action="{{ route('docentesAnuncios.update', ':id') }}" method="POST">
             @csrf
-            <input type="hidden" name="id_curso" id="id_curso" value="{{ $curso->acu_id }}">
+            @method('PUT')
+            <input type="hidden" name="id_anuncio" id="id_anuncioo">
 
             <!-- Título del anuncio -->
             <div class="mt-4">
                 <label for="titulo" class="block text-gray-700 font-medium">Título</label>
-                <input type="text" name="titulo" id="titulo" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ingrese el título" required>
+                <input type="text" name="titulo" id="tituloAnuncioo" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ingrese el título" required>
             </div>
 
             <!-- Descripción del anuncio -->
             <div class="mt-4">
                 <label for="descripcion" class="block text-gray-700 font-medium">Descripción</label>
-                <textarea name="descripcion" id="descripcion" rows="4" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ingrese la descripción" required></textarea>
+                <textarea name="descripcion" id="descripcionn" rows="4" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ingrese la descripción" required></textarea>
             </div>
 
             <!-- Botones de acción -->
             <div class="mt-6 flex justify-end space-x-4">
-                <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Cancelar</button>
-                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Registrar</button>
+                <button type="button" onclick="closeModalAnuncioEditar()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Cancelar</button>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Actualizar</button>
             </div>
         </form>
     </div>
 </div>
-{{-- MODAL PARA EDITAR UNA ANUNCIO DENTRO DE SECTION ANUNCIOS --}}
+
+
+
+{{-- RecursoModal --}}
+{{-- RecursoModal --}}
+{{-- RecursoModal --}}
+{{-- RecursoModal --}}
+{{-- RecursoModal --}}
+{{-- RecursoModal --}}
+{{-- RecursoModal --}}
+
+
+<div id="modalEditarRecurso" class="hidden fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <!-- Encabezado del Modal -->
+        <div class="flex justify-between items-center">
+            <h3 class="text-2xl font-semibold text-gray-800">Editar Recurso Académico</h3>
+            <button onclick="closeModalEdicionRecurso()" class="text-gray-600 hover:text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Formulario para editar un recurso -->
+        {{-- {{ route('docentesRecursos.update', ':id') }} --}}
+        <form id="editRecursoForm" action="{{ route('docentesRecursos.update', ':id') }}" method="POST">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="id_recurso" id="id_recurso">
+
+            <!-- Título del recurso -->
+            <div class="mt-4">
+                <label for="titulo" class="block text-gray-700 font-medium">Título</label>
+                <input type="text" name="titulo" id="tituloRecurso" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ingrese el título" required>
+            </div>
+
+            <!-- Descripción del recurso -->
+            <div class="mt-4">
+                <label for="descripcion" class="block text-gray-700 font-medium">Descripción</label>
+                <textarea name="descripcion" id="descripcionRecurso" rows="4" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ingrese la descripción"></textarea>
+            </div>
+
+            <!-- Enlace del recurso -->
+            <div class="mt-4">
+                <label for="ruta_archivo" class="block text-gray-700 font-medium">Enlace del Recurso</label>
+                <input type="text" name="ruta_archivo" id="ruta_archivoRecurso" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ingrese el enlace del recurso" required>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="mt-6 flex justify-end space-x-4">
+                <button type="button" onclick="closeModalEdicionRecurso()" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600">Cancelar</button>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Actualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 {{-- MODAL PARA NOTAS --}}
 <div class="modal hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50" id="crearNotaModal">
@@ -154,21 +313,31 @@
 </div>
 @endif
 
- 
+
+
+
+
+ {{-- AQUI INICIA LA VISTA CON CADA FORM --}}
+ {{-- AQUI INICIA LA VISTA CON CADA FORM --}}
+ {{-- AQUI INICIA LA VISTA CON CADA FORM --}}
+ {{-- AQUI INICIA LA VISTA CON CADA FORM --}}
+ {{-- AQUI INICIA LA VISTA CON CADA FORM --}}
+ {{-- AQUI INICIA LA VISTA CON CADA FORM --}}
+ {{-- AQUI INICIA LA VISTA CON CADA FORM --}}
+
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
-    <!-- Título del curso -->
+{{-- anuncio --}}
+{{-- anuncio --}}
+{{-- anuncio --}}
+{{-- anuncio --}}
+{{-- anuncio --}}
+{{-- anuncio --}}
+{{-- anuncio --}}
+
     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white mb-4">Mi curso: {{$curso->acu_nombre}}</h2>
-
-    <!-- Modal (Este código debe ir dentro de tu vista) -->
-
-
-    <!-- Sección de Anuncios -->
     <div class="mb-6 p-4 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-700">
         <h3 class="text-xl font-semibold text-gray-700 dark:text-white">Anuncios</h3>
-        <!-- Botón para registrar un nuevo anuncio -->
-        {{-- <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Registrar Anuncio</button> --}}
-        <!-- Botón para abrir el Modal -->
-        <button onclick="openModal({{ $curso->acu_id }})" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Registrar Anuncio</button>
+        <button onclick="openModal1({{ $curso->acu_id }})" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Registrar Anuncio</button>
 
         <div class="mt-6 overflow-x-auto">
             <table class="min-w-full bg-white border border-gray-300">
@@ -190,8 +359,8 @@
 
                                 <td class="p-4">{{ $anuncio->fecha_publicacion}}</td>
                                 <td class="p-4">
-                                    <button class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Editar</button>
-                                    <button  class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Eliminar</button>
+                                   <button onclick="openEditModal({{ $anuncio->id_anuncio }})" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Editar Anuncio</button>
+                                    {{-- <button  class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Eliminar</button> --}}
                                 </td>
                             </tr>
                         @endif
@@ -200,6 +369,22 @@
             </table>
         </div>
     </div>
+
+
+
+{{-- recursoAcademico --}}
+{{-- recursoAcademico --}}
+{{-- recursoAcademico --}}
+{{-- recursoAcademico --}}
+{{-- recursoAcademico --}}
+{{-- recursoAcademico --}}
+{{-- recursoAcademico --}}
+{{-- recursoAcademico --}}
+{{-- recursoAcademico --}}
+{{-- recursoAcademico --}}
+{{-- recursoAcademico --}}
+{{-- recursoAcademico --}}
+
 
     <!-- Sección de Recursos Académicos -->
     <div class="mb-6 p-4 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-700">
@@ -218,10 +403,11 @@
             </div>
         
             <div class="mb-4">
-                <label for="archivos" class="block text-sm font-medium text-gray-700">Archivos</label>
-                <input type="file" id="archivos" name="archivos[]" multiple class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                <small class="text-gray-500">Puedes subir múltiples archivos. Tamaño máximo: 5MB por archivo.</small>
+                <label for="ruta_archivo" class="block text-sm font-medium text-gray-700">Enlace del Recurso</label>
+                <input type="text" id="ruta_archivo" name="ruta_archivo" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ingresa el enlace de Google Drive u otro servicio" required>
+                <small class="text-gray-500">Ingresa un enlace válido (por ejemplo, un enlace de Google Drive, Dropbox, etc.).</small>
             </div>
+            
         
             <input type="hidden" name="id_curso" id="id_curso" value="{{ $curso->acu_id }}">
         
@@ -245,42 +431,23 @@
                     @forelse ($recursos as $recurso)
                         <tr>
                             <td class="p-4">
-                                <!-- Ícono dinámico según la extensión -->
-                                @php
-                                    $ext = pathinfo($recurso->nombre_archivo, PATHINFO_EXTENSION);
-                                @endphp
-                                @if ($ext == 'pdf')
-                                    <i class="fas fa-file-pdf text-red-500 text-xl"></i>
-                                @elseif (in_array($ext, ['doc', 'docx']))
-                                    <i class="fas fa-file-word text-blue-500 text-xl"></i>
-                                @elseif (in_array($ext, ['xls', 'xlsx']))
-                                    <i class="fas fa-file-excel text-green-500 text-xl"></i>
-                                @elseif (in_array($ext, ['ppt', 'pptx']))
-                                    <i class="fas fa-file-powerpoint text-orange-500 text-xl"></i>
-                                @else
-                                    <i class="fas fa-file text-gray-500 text-xl"></i>
-                                @endif
+                                <!-- Ícono de enlace, representando el recurso -->
+                                <i class="fas fa-link text-blue-500 text-xl"></i>
                             </td>
                             <td class="p-4">{{ $recurso->titulo }}</td>
                             <td class="p-4">{{ $recurso->descripcion }}</td>
                             <td class="p-4">{{ $recurso->fecha_subida }}</td>
                             <td class="p-4 flex space-x-2">
-                                <!-- Botón de Descargar -->
-                                <a href="{{ asset('storage/' . $recurso->ruta_archivo) }}" target="_blank" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                    Descargar
-                                </a>
-                                <!-- Botón de Editar -->
-                                {{-- <button onclick="openEditModal({{ $recurso->id }})" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-                                    Editar
-                                </button> --}}
-                                <!-- Botón de Eliminar -->
-                                {{-- <form action="{{ route('recursos.destroy', $recurso->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este recurso?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-                                        Eliminar
-                                    </button>
-                                </form> --}}
+                                <!-- Copiar enlace -->
+                                <button onclick="copyToClipboard('{{ $recurso->ruta_archivo }}')" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                                    <i class="fas fa-link"></i> Copiar Enlace
+                                </button>
+                                <button 
+                                onclick="openModalEdicionRecurso('{{ $recurso->id }}', '{{ $recurso->titulo }}', '{{ $recurso->descripcion }}', '{{ $recurso->ruta_archivo }}')"
+                                class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                            >
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
                             </td>
                         </tr>
                     @empty
@@ -292,46 +459,47 @@
             </table>
         </div>
         
+        <script>
+            // Función para copiar el enlace al portapapeles
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(function() {
+                    alert("Enlace copiado al portapapeles!");
+                }).catch(function(err) {
+                    console.error("Error al copiar el enlace: ", err);
+                });
+            }
+
+            
+            
+// Función para abrir el modal de edición y cargar los datos del recurso
+        function openModalEdicionRecurso(id, titulo, descripcion, ruta_archivo) {
+            console.log("hola");
+
+            const url2 = "{{ route('docentesRecursos.update', ':id') }}".replace(':id', id);
+            document.getElementById('editRecursoForm').action = url2;
+            document.getElementById('id_recurso').value = id;
+            document.getElementById('tituloRecurso').value = titulo;
+            document.getElementById('descripcionRecurso').value = descripcion;
+            document.getElementById('ruta_archivoRecurso').value = ruta_archivo;
+
+            document.getElementById('modalEditarRecurso').classList.remove('hidden');
+        }
+
+        // Función para cerrar el modal de edición
+        function closeModalEdicionRecurso() {
+            document.getElementById('modalEditarRecurso').classList.add('hidden');
+        }
+
+        </script>    
+            
     </div>
 
-    <!-- Sección de Actividades -->
-    {{-- <div class="mb-6 p-4 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-700">
-        <h3 class="text-xl font-semibold text-gray-700 dark:text-white">Actividades</h3>
-        <!-- Botón para registrar una actividad -->
-        <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Registrar Actividad</button>
+   
 
-        <!-- Tabla de actividades -->
-        <div class="mt-6 overflow-x-auto">
-            <table class="min-w-full bg-white border border-gray-300">
-                <thead>
-                    <tr>
-                        <th class="p-4 text-left">Actividad</th>
-                        <th class="p-4 text-left">Fecha</th>
-                        <th class="p-4 text-left">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Ejemplo de fila de actividades -->
-                    <tr>
-                        <td class="p-4">Actividad 1</td>
-                        <td class="p-4">2024-11-17</td>
-                        <td class="p-4">
-                            <button class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Editar</button>
-                            <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Eliminar</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="p-4">Actividad 2</td>
-                        <td class="p-4">2024-11-16</td>
-                        <td class="p-4">
-                            <button class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Editar</button>
-                            <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Eliminar</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div> --}}
+
+
+
+
 
     <!-- Sección de Notas (aún no implementada) -->
     <div class="mb-6 p-4 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-700">
@@ -372,15 +540,13 @@
                                 </span>
                             </div>
                             <div class="flex items-center space-x-3">
-                                <input type="number" 
-                                       class="px-3 py-2 border border-gray-300 rounded-md w-20 text-center"
-                                       id="nota_{{ $filteredNote->alu_dni }}" 
-                                       name="nota" 
-                                       min="0" 
-                                       max="20" 
-                                       step="0.01" 
-                                       placeholder="0.00"
-                                       value="{{ $filteredNote->nota ?? '' }}">  <!-- Muestra la nota existente si hay alguna -->
+                                <input type="text" 
+                                class="px-3 py-2 border border-gray-300 rounded-md w-20 text-center"
+                                id="nota_{{ $filteredNote->alu_dni }}" 
+                                name="nota" 
+                                placeholder="AD-A-B-C"
+                                value="{{ $filteredNote->nota ?? '' }}">
+                          <!-- Muestra la nota existente si hay alguna -->
                             </div>
                             <div class="flex items-center space-x-3">
                                 <button type="submit" 
@@ -468,7 +634,6 @@
         </div>
 
 
-
         <div class="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-md">
             <h2 class="text-3xl font-semibold text-gray-800 mb-6">Reporte de Asistencias</h2>
         
@@ -476,8 +641,12 @@
             <div class="mb-6">
                 <!-- Mostrar la fecha -->
                 <div class="flex justify-between items-center mb-4">
-                    <span class="text-xl font-semibold text-gray-700">{{ \Carbon\Carbon::parse($fecha)->format('d-m-Y') }}</span>
-                    <button class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="toggleDetalle('{{ $fecha }}')">Ver Detalle</button>
+                    <span class="text-xl font-semibold text-gray-700">
+                        {{ \Carbon\Carbon::parse($fecha)->format('d-m-Y') }}
+                    </span>
+                    <button class="text-indigo-600 hover:text-indigo-800 font-medium" onclick="toggleDetalle('{{ $fecha }}')">
+                        Ver Detalle
+                    </button>
                 </div>
         
                 <!-- Contenedor para los detalles -->
@@ -487,20 +656,62 @@
                             <tr class="bg-gray-100">
                                 <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Estudiante</th>
                                 <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Asistencia</th>
+                                <th class="px-4 py-2 text-center text-sm font-medium text-gray-700">Acción</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($asistenciasPorFecha as $asistencia)
-                                <tr class="border-b">
-                                    <td class="px-4 py-2 text-sm text-gray-800">{{ $asistencia->estudiante->alu_apellidos }}, {{ $asistencia->estudiante->alu_nombres }}</td>
-                                    <td class="px-4 py-2 text-sm text-gray-800">
-                                        @if($asistencia->asistencia == 'F')
-                                            <span class="text-red-500">Falta</span>
-                                        @else
-                                            <span class="text-green-500">Presente</span>
-                                        @endif
-                                    </td>
-                                </tr>
+                            <tr class="border-b">
+                                <td class="px-4 py-2 text-sm text-gray-800">
+                                    {{ $asistencia->estudiante->alu_apellidos }}, {{ $asistencia->estudiante->alu_nombres }}
+                                </td>
+                                <td class="px-4 py-2 text-sm text-gray-800">
+                                    @if($asistencia->asistencia == 'F')
+                                        <span class="text-red-500">Falta</span>
+                                    @else
+                                        <span class="text-green-500">Presente</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-2 text-center">
+                                    <button class="text-blue-600 hover:text-blue-800 font-medium"
+                                            onclick="toggleEdit('{{ $fecha }}', '{{ $asistencia->alu_dni }}')">
+                                        Editar
+                                    </button>
+                                </td>
+                            </tr>
+        
+                            <!-- Formulario para editar asistencia -->
+                            <tr id="edit_form_{{ $fecha }}_{{ $asistencia->alu_dni }}" class="hidden">
+                                <td colspan="3" class="px-4 py-2">
+                                    <form action="{{ route('editar.asistencia') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="fecha" value="{{ $fecha }}">
+                                        <input type="hidden" name="alu_dni" value="{{ $asistencia->alu_dni }}">
+                                        <input type="hidden" name="cursoid" value="{{ $curso->acu_id }}">
+                                        
+                                        <div class="flex items-center space-x-4">
+                                            <div class="flex items-center space-x-2">
+                                                <label class="inline-flex items-center">
+                                                    <input type="radio" name="asistencia" value="P" 
+                                                           class="form-radio text-green-500"
+                                                           {{ $asistencia->asistencia == 'P' ? 'checked' : '' }}>
+                                                    <span class="ml-2">Presente</span>
+                                                </label>
+                                                <label class="inline-flex items-center">
+                                                    <input type="radio" name="asistencia" value="F" 
+                                                           class="form-radio text-red-500"
+                                                           {{ $asistencia->asistencia == 'F' ? 'checked' : '' }}>
+                                                    <span class="ml-2">Falta</span>
+                                                </label>
+                                            </div>
+                                            <button type="submit"
+                                                    class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                                                Guardar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
                             @endforeach
                         </tbody>
                     </table>
@@ -508,6 +719,19 @@
             </div>
             @endforeach
         </div>
+        
+        <script>
+            function toggleDetalle(fecha) {
+                const detalle = document.getElementById('detalle_' + fecha);
+                detalle.classList.toggle('hidden');
+            }
+        
+            function toggleEdit(fecha, alu_dni) {
+                const editForm = document.getElementById(`edit_form_${fecha}_${alu_dni}`);
+                editForm.classList.toggle('hidden');
+            }
+        </script>
+        
 
 </section>
 
@@ -608,19 +832,18 @@ setTimeout(() => {
 </script>
 
 
-
 <script>
     // Función para abrir el modal
-    function openModal(cursoId) {
-        document.getElementById('id_curso').value = cursoId; // Seteamos el id_curso en el input hidden
-        document.getElementById('modalRegistrarAnuncio').classList.remove('hidden');
-        document.getElementById('titulo').value = '';
+    function openModal1(cursoId) {
+        document.getElementById('id_curso').value = cursoId; // Establece el id_curso en el input hidden
+        document.getElementById('modalRegistrarAnuncio').classList.remove('hidden'); // Muestra el modal
+        document.getElementById('titulo').value = ''; // Limpia los campos del modal
         document.getElementById('descripcion').value = '';
     }
 
     // Función para cerrar el modal
-    function closeModal() {
-        document.getElementById('modalRegistrarAnuncio').classList.add('hidden');
+    function closeModal1() {
+        document.getElementById('modalRegistrarAnuncio').classList.add('hidden'); // Oculta el modal
     }
 </script>
 
@@ -755,4 +978,42 @@ function showEstudiantes(comentarios) {
         }
     }
 </script>
+<script>
+    // Función para abrir el modal de edición y cargar datos del anuncio
+    function openEditModal(anuncioId) {
+    // Imprimir el anuncioId y la URL generada
+    console.log('Anuncio ID:', anuncioId);
+    const url = "{{ route('docentesAnuncios.edit', ':id') }}".replace(':id', anuncioId);
+    console.log('URL generada:', url);  // Verifica la URL generada
+    const url2 = "{{ route('docentesAnuncios.update', ':id') }}".replace(':id', anuncioId);
+    document.getElementById('editAnuncioForm').action = url2;
+    // Realizar una solicitud AJAX para obtener los datos del anuncio
+    fetch(url)  // Usar la URL generada
+        .then(response => {
+            // Verificar si la respuesta es exitosa
+            if (!response.ok) {
+                throw new Error('Error al obtener los datos: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Datos recibidos:', data);  // Verifica los datos recibidos
+
+            // Rellenar los campos del formulario con los datos del anuncio
+            document.getElementById('id_anuncioo').value = data.id_anuncio;
+            document.getElementById('tituloAnuncioo').value = data.titulo;
+            document.getElementById('descripcionn').value = data.descripcion;
+
+            // Mostrar el modal
+            document.getElementById('modalEditarAnuncio').classList.remove('hidden');
+        })
+        .catch(error => console.error('Error al cargar los datos:', error));
+}
+function closeModalAnuncioEditar() {
+        document.getElementById('modalEditarAnuncio').classList.add('hidden');
+    }
+</script>
+
+
+@endif
 @endsection

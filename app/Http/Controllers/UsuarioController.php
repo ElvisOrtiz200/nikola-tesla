@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Estudiante;
+use App\Models\RecursosHumanos;
 use App\Models\Rol;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
@@ -22,7 +24,9 @@ class UsuarioController extends Controller
     public function create()
     {
         $roles = Rol::all();
-        return view('usuario.crear',compact('roles'));
+        $estudiantes = Estudiante::all();
+        $rrhh = RecursosHumanos::all();
+        return view('usuario.crear',compact('roles','estudiantes','rrhh'));
     }
 
     /**
@@ -38,23 +42,57 @@ class UsuarioController extends Controller
      */
     public function show(Request $request)
     {
-        $query = Usuario::query();
-
-        if ($request->has('search') && $request->search != '') {
-            $query->where('usu_login', 'like', '%' . $request->search . '%');
-        }
-
-        $usuarios = Usuario::with('rol')->paginate(15); // Cambia esto para paginación
-
+        $search = $request->input('search');
+    
+        $usuarios = Usuario::with('rol')
+            ->when($search, fn($q) =>
+                $q->where('usu_login', 'like', '%' . $search . '%')
+                  ->orWhere('correo', 'like', '%' . $search . '%'))
+            ->paginate(15);
+    
         return view('usuario.editar', compact('usuarios'));
     }
-
+    
+    public function show2(Request $request)
+    {
+        $search = $request->input('search');
+    
+        $usuarios = Usuario::with('rol')
+            ->when($search, fn($q) =>
+                $q->where('usu_login', 'like', '%' . $search . '%')
+                  ->orWhere('correo', 'like', '%' . $search . '%'))
+            ->paginate(15);
+    
+        return view('usuario.editar', compact('usuarios'));
+    }
+ 
     public function editando($id)
     {
+        // Filtrar el personal por el id del usuario
+        $personal = Usuario::join('rrhh_personal', 'rrhh_personal.per_id', '=', 'auth_usuario.per_id')
+                            ->select('rrhh_personal.per_dni', 'rrhh_personal.per_id')
+                            ->where('auth_usuario.usu_id', $id)  // Filtrar por id del usuario
+                            ->first();
+    
+        // Filtrar los estudiantes por el id del usuario
+        $estudiantes = Usuario::join('acad_estudiantes', 'acad_estudiantes.alu_dni', '=', 'auth_usuario.alu_dni')
+                               ->where('auth_usuario.usu_id', $id)  // Filtrar por id del usuario
+                               ->first();
+    
+        // Obtener todos los estudiantes y personales (para los select)
+        $todosLosPersonales = RecursosHumanos::all();
+    
+        $todosLosEstudiantes = Estudiante::all();
+        $rol = Rol::join('auth_usuario','auth_usuario.idrol','=','rol.idrol')->select('rol.nombre_rol','rol.idrol')->where('auth_usuario.usu_id', $id)  // Filtrar por id del usuario
+        ->first();
+        $roles = Rol::all();
+        // Obtener el usuario por el id
         $usuario = Usuario::findOrFail($id);
-
-        return view('usuario.editando', compact('usuario'));
+    
+        // Pasar los datos a la vista
+        return view('usuario.editando', compact('usuario', 'personal', 'estudiantes', 'todosLosPersonales', 'todosLosEstudiantes','roles','rol'));
     }
+    
 
     /**
      * Show the form for editing the specified resource.
@@ -70,6 +108,23 @@ class UsuarioController extends Controller
     public function update(Request $request, string $id)
     {
          
+    }
+
+    public function listarUsuarios(Request $request)
+    {
+        // Obtener el término de búsqueda (si existe)
+        $search = $request->input('search');
+
+        // Consultar usuarios con paginación y búsqueda
+        $usuarios = Usuario::when($search, function ($query, $search) {
+                $query->where('usu_login', 'like', '%' . $search . '%')
+                      ->orWhere('correo', 'like', '%' . $search . '%');
+            })
+            ->with('rol') // Cargar relación con la tabla de roles
+            ->paginate(10); // Paginación de 10 elementos por página
+
+        // Retornar la vista con los datos paginados
+        return view('usuario.listar', compact('usuarios', 'search'));
     }
 
     /**

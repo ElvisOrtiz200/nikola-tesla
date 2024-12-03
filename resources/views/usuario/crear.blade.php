@@ -20,16 +20,34 @@
 </div>
 @endif
 
+@if (request()->cookie('error'))
+<div id="alert" class="fixed top-4 right-4 z-50 flex w-full max-w-sm overflow-hidden bg-red-500 rounded-lg shadow-md dark:bg-red-700" style="display: flex;">
+    <div class="flex items-center justify-center w-12 bg-red-600">
+        <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 3.33331C10.8 3.33331 3.33337 10.8 3.33337 20C3.33337 29.2 10.8 36.6666 20 36.6666C29.2 36.6666 36.6667 29.2 36.6667 20C36.6667 10.8 29.2 3.33331 20 3.33331ZM16.6667 28.3333L8.33337 20L10.6834 17.65L16.6667 23.6166L29.3167 10.9666L31.6667 13.3333L16.6667 28.3333Z" />
+        </svg>
+    </div>
+    <div class="px-4 py-2 -mx-3">
+        <div class="mx-3">
+            <span class="font-semibold text-white">¡Error!</span>
+            <p class="text-sm text-white">{{ request()->cookie('error') }}</p>
+        </div>
+    </div>
+</div>
+@endif
 
 
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md drop-shadow-2xl dark:bg-gray-800">
     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Registrar usuario</h2>
 
-    <form id="rolCrear" action="{{route('register')}}" method="POST">
+    <form id="rolCrear" action="{{route('register')}}" method="POST" >
         <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="correo">Correo</label>
-                <input id="correo" name="correo" type="email" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <input id="correo" name="correo" type="email" 
+                       class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                       required>
+                <div id="errorCorreo" class="text-red-500 hidden mt-2"></div>
             </div>
 
             <div class="flex justify-center space-x-8 mb-6">
@@ -43,32 +61,55 @@
                 </label>
             </div>
         
-            <!-- Input de ID personal (solo visible cuando se selecciona 'personal') -->
-            <div id="personal_id" class="mb-6 hidden">
+                <!-- Combo de ID Personal -->
+            <div id="personal_id" class="mb-6">
                 <label for="per_id" class="block text-lg font-semibold text-gray-700">ID Personal</label>
-                <input id="per_id" name="per_id" type="text" value="{{ old('per_id') }}" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                <select id="per_id" name="per_id" class="select2 block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                   
+                    @foreach ($rrhh as $person)
+                        <option value="{{ $person->per_id }}" {{ old('per_id') == $person->per_id ? 'selected' : '' }}>
+                            {{ $person->per_dni }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
-        
-            <!-- Input de DNI Estudiante (solo visible cuando se selecciona 'estudiante') -->
-            <div id="estudiante_dni" class="mb-6 hidden">
+
+            <!-- Combo de DNI Estudiante -->
+            <div id="estudiante_dni" class="mb-6">
                 <label for="alu_dni" class="block text-lg font-semibold text-gray-700">DNI Estudiante</label>
-                <input id="alu_dni" name="alu_dni" type="text" value="{{ old('alu_dni') }}" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                <select id="alu_dni" name="alu_dni" class="select2 block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                   
+                    @foreach ($estudiantes as $estudiante)
+                        <option value="{{ $estudiante->alu_dni }}" {{ old('alu_dni') == $estudiante->alu_dni ? 'selected' : '' }}>
+                            {{ $estudiante->alu_dni }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
+
+            
+
 
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="usu_login">Nombre de usuario</label>
-                <input id="usu_login" name="usu_login" type="text" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <input id="usu_login" name="usu_login" type="text" 
+                       class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
+                       pattern="^[A-Za-z0-9_.-]+$"
+                       title="El nombre de usuario solo puede contener letras, números, guiones bajos y puntos."
+                       required>
+                <div id="errorUsuario" class="text-red-500 hidden mt-2"></div>
             </div>
 
             <div>
                 <label class="text-gray-700 dark:text-gray-200" for="password">Contraseña</label>
-                <input id="password" name="password" type="password" class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <input id="password" name="password" type="password" 
+                       class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
+                <div id="errorPassword" class="text-red-500 hidden mt-2"></div>
             </div>
             <div>
                     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Asignar rol</h2>
 
                 <div class="max-w-xs mx-auto mt-4">
-                    <label class="text-gray-700 dark:text-gray-200" for="idrol">Seleccionar rol</label>
         
                     <select
                         class="w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -83,7 +124,8 @@
                     </select>
                 </div>
             </div>
-
+          
+            
             
 
 
@@ -147,6 +189,11 @@
     </div>
     
 </div>
+
+
+
+
+
 <script>
     function deleteCookie(name) {
     // Eliminar la cookie 'success' con los parámetros correctos
@@ -157,13 +204,11 @@
 setTimeout(() => {
     const alert = document.getElementById('alert');
     if (alert) {
-        // Ocultar el mensaje
         alert.style.display = 'none';
-        
-        // Eliminar la cookie 'success' después de ocultar el mensaje
-        deleteCookie('success');
+        deleteCookie('success'); // Borrar cookie de éxito
+        deleteCookie('error');   // Borrar cookie de error
     }
-}, 2000);
+}, 3000);
 </script>
 
 <script>
@@ -172,17 +217,21 @@ setTimeout(() => {
     const cancelButton = document.getElementById('cancelButton');
     const confirmButton = document.getElementById('confirmButton');
     
-    
+    registerButton.addEventListener('click', function () {
+    if (validarFormulario()) {     
+        confirmModal.classList.remove('hidden');    
+    }
+    });
+
+
      // Lógica cuando se confirma el registro
-     confirmButton.addEventListener('click', () => {
+    confirmButton.addEventListener('click', () => {
         // Aquí puedes proceder con el registro, por ejemplo, enviando el formulario
         document.getElementById('rolCrear').submit();
     });
 
     // Mostrar el modal cuando se hace clic en "Registrar"
-    registerButton.addEventListener('click', () => {
-        confirmModal.classList.remove('hidden');
-    });
+   
 
     // Ocultar el modal cuando se hace clic en "Cancelar"
     cancelButton.addEventListener('click', () => {
@@ -191,6 +240,56 @@ setTimeout(() => {
 
 </script>
 
+<script>
+    function validarFormulario() {
+    var correo = document.getElementById('correo').value;
+    var usuario = document.getElementById('usu_login').value;
+    var password = document.getElementById('password').value;
+
+    var errorCorreo = document.getElementById('errorCorreo');
+    var errorUsuario = document.getElementById('errorUsuario');
+    var errorPassword = document.getElementById('errorPassword');
+
+    // Limpiar los mensajes de error antes de realizar nuevas validaciones
+    errorCorreo.textContent = '';
+    errorUsuario.textContent = '';
+    errorPassword.textContent = '';
+
+    errorCorreo.classList.add('hidden');
+    errorUsuario.classList.add('hidden');
+    errorPassword.classList.add('hidden');
+
+    // Validación del correo
+    var regexCorreo = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!correo) {
+        errorCorreo.textContent = "El correo es obligatorio.";
+        errorCorreo.classList.remove('hidden');
+        return false;
+    } else if (!regexCorreo.test(correo)) {
+        errorCorreo.textContent = "Por favor ingrese un correo electrónico válido.";
+        errorCorreo.classList.remove('hidden');
+        return false;
+    }
+
+    // Validación del nombre de usuario (solo letras, números, guiones bajos y puntos)
+    var regexUsuario = /^[A-Za-z0-9_.-]+$/;
+    if (!regexUsuario.test(usuario)) {
+        errorUsuario.textContent = "El nombre de usuario solo puede contener letras, números, guiones bajos y puntos.";
+        errorUsuario.classList.remove('hidden');
+        return false;
+    }
+
+    // Validación de la contraseña (al menos 8 caracteres)
+    if (password.length < 8) {
+        errorPassword.textContent = "La contraseña debe tener al menos 8 caracteres.";
+        errorPassword.classList.remove('hidden');
+        return false;
+    }
+
+    return true; // Si todo es válido, el formulario se enviará
+}
+
+</script>
 
 
 <script>
@@ -213,4 +312,16 @@ setTimeout(() => {
     personalRadio.addEventListener('change', toggleFields);
     toggleFields(); // Inicializa los campos según la selección predeterminada
 </script>
+
+<script>
+    // Inicializa Select2 en todos los elementos con la clase 'select2'
+    $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: "Seleccione una opción", // Texto inicial
+            allowClear: true, // Agrega la opción para limpiar la selección
+            width: 'resolve' // Ajusta el ancho
+        });
+    });
+</script>
+
 @endsection

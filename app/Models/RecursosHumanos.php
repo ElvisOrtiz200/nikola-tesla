@@ -29,6 +29,8 @@ class RecursosHumanos extends Model
         return $this->hasOne(Docente::class, 'per_id', 'per_id');
     }
 
+    
+
     public function cursos()
     {
         return $this->belongsToMany(

@@ -4,6 +4,9 @@
 
 <section class="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
     <h2 class="text-lg font-semibold text-gray-700 capitalize dark:text-white">Horario de Cursos</h2>
+    @if($gradoAlumno == 'vacio')
+    <p class="text-gray-500">No hay cursos registrados. No esta registrado en un grado</p>
+    @else
 
     <form id="roledit" method="POST">
         @csrf
@@ -113,5 +116,5 @@
         document.getElementById('roledit').submit();
     });
 </script>
-
+@endif
 @endsection
