@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditoriaLog;
 use App\Models\Bimestre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
-
+use Carbon\Carbon;
  
 class BimestreController extends Controller
 {
@@ -24,7 +25,7 @@ class BimestreController extends Controller
         try {
             // Validar los datos del formulario
             $validator = FacadesValidator::make($request->all(), [
-                'bim_sigla' => 'required|max:3|unique:bimestre,bim_sigla',
+                'bim_sigla' => 'required|unique:bimestre,bim_sigla',
                 'bim_descripcion' => 'required|max:15',
                 'anio' => 'nullable|digits:4|integer',
                 'fecha_inicio' => 'nullable|date',
@@ -37,6 +38,7 @@ class BimestreController extends Controller
                     ->withCookie(cookie('error', $errorMessages, 1, '/', null, false, false));
             }
 
+
             // Crear y guardar el nuevo bimestre
             $bimestre = new Bimestre();
             $bimestre->bim_sigla = $request->bim_sigla;
@@ -44,7 +46,17 @@ class BimestreController extends Controller
             $bimestre->anio = $request->anio;
             $bimestre->fecha_inicio = $request->fecha_inicio;
             $bimestre->fecha_fin = $request->fecha_fin;
+            $bimestre->estadoBIMESTRE = $request->estadoBIMESTRE;
             $bimestre->save();
+
+
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'C';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Bimestre';
+            $auditoria->save();
 
             // Redirigir con mensaje de éxito
             return redirect()->route('bimestre.create')
@@ -84,7 +96,7 @@ class BimestreController extends Controller
     try {
         // Validar los datos del formulario
         $validator = FacadesValidator::make($request->all(), [
-            'bim_sigla' => 'required|max:3|unique:bimestre,bim_sigla,' . $id . ',bim_sigla', // Excluye la sigla actual
+            'bim_sigla' => 'required|unique:bimestre,bim_sigla,' . $id . ',bim_sigla', // Excluye la sigla actual
             'bim_descripcion' => 'required|max:15',
             'anio' => 'nullable|digits:4|integer',
             'fecha_inicio' => 'nullable|date',
@@ -106,7 +118,15 @@ class BimestreController extends Controller
         $bimestre->anio = $request->anio;
         $bimestre->fecha_inicio = $request->fecha_inicio;
         $bimestre->fecha_fin = $request->fecha_fin;
+        $bimestre->estadoBIMESTRE = $request->estadoBIMESTRE;
         $bimestre->save();
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'U';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Bimestre';
+            $auditoria->save();
 
         // Redirigir con mensaje de éxito
         return redirect()->route('bimestre.show', $id) // Cambia a la ruta que desees
@@ -142,18 +162,45 @@ class BimestreController extends Controller
         return view('bimestre.eliminando', compact('bimestre'));
     }
 
-    public function destroy(string $id){
+    public function destroy(string $id, Request $request){
         $registro = Bimestre::find($id);
 
     if ($registro) {
         // Elimina el registro
         $registro->delete();
+        $auditoria = new AuditoriaLog();
+        $auditoria->usuario = $request->cookie('user_name');
+        $auditoria->operacion = 'D';
+        $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+        $auditoria->entidad = 'Bimestre';
+        $auditoria->save();
 
         // Retorna una respuesta, redirige o envía un mensaje
         return redirect()->route('apoderado.eliminar') // Cambia a la ruta que desees
         ->withCookie(cookie('success', 'Apoderado eliminado con éxito.', 1, '/', null, false, false));
     }
     return redirect()->back()->with('error', 'Registro no encontrado.');
+    }
+
+
+    public function listarBimestre(Request $request)
+    {
+        $query = Bimestre::query();
+
+        // Filtros de búsqueda
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('bim_sigla', 'like', "%$search%")
+                  ->orWhere('bim_descripcion', 'like', "%$search%")
+                  ->orWhere('anio', 'like', "%$search%");
+        } else {
+            $search = ''; // Definir la variable para evitar errores
+        }
+
+        // Obtener los datos paginados
+        $bimestres = $query->orderBy('anio', 'desc')->paginate(10);
+
+        return view('bimestre.listar', compact('bimestres', 'search'));
     }
 
 }

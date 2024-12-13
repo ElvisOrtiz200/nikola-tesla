@@ -15,7 +15,7 @@ class Anuncio extends Model
     protected $primaryKey = 'id_anuncio';
 
     // Campos que pueden asignarse masivamente
-    protected $fillable = ['titulo', 'descripcion', 'fecha_publicacion', 'id_curso', 'estado'];
+    protected $fillable = ['titulo', 'descripcion', 'fecha_publicacion', 'id_curso', 'estado','estadobim'];
 
     public $timestamps = false;
 

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditoriaLog;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
-
+use Carbon\Carbon;
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -39,6 +40,13 @@ class AuthController extends Controller
         $user->correo = $request->correo;
         $user->idrol = $request->idrol;
         $user->save();
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'C';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Usuario';
+            $auditoria->save();
 
         // Redirigir con mensaje de éxito
         return redirect()->route('usuario.crear')
@@ -168,6 +176,13 @@ class AuthController extends Controller
             $user->usu_estado = 'A';
             $user->correo = $request->correo;
             $user->save();
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'U';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Usuario';
+            $auditoria->save();
         
             // Redirigir con mensaje de éxito
             return redirect()->route('usuario.show') // Cambia a la ruta que desees

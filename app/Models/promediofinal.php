@@ -5,36 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AcadNota extends Model
+class promediofinal extends Model
 {
     use HasFactory;
-    protected $table = 'acad_notas';
+    protected $table = 'promediofinal';
+  
+    public $incrementing = false; // Indicar que la clave primaria no es autoincremental
 
     protected $fillable = [
-        'alu_dni',
-        'nota',
-        'acdo_id',
-        'fecha',
-        'estado',
-        'comentarios',
-        'bim_sigla'
+          'nota', 'alu_dni', 'acdo_id', 'bim_sigla'
     ];
     public $timestamps = false;
 
-    public function estudiante()
+    public function estudiantes()
     {
         return $this->belongsTo(Estudiante::class, 'alu_dni', 'alu_dni');
     }
 
-    /**
-     * Relación con AcadCargaDocente.
-     */
     public function cargaDocente()
     {
         return $this->belongsTo(Curso_Docente::class, 'acdo_id', 'acdo_id');
     }
- 
-        public function bimestre()
+
+    public function bimestre()
     {
         return $this->belongsTo(Bimestre::class, 'bim_sigla', 'bim_sigla');
     }

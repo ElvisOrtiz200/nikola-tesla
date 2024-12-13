@@ -10,7 +10,9 @@ use App\Models\Horario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
-
+use App\Models\AuditoriaLog;
+use App\Models\Bimestre;
+use Carbon\Carbon;
 
 class HorarioController extends Controller
 {
@@ -20,40 +22,46 @@ class HorarioController extends Controller
     }
 
     public function getCursosByGrado($gradoId)
-{
-    try {
-        $cursos = Curso::where('id_grado', $gradoId)->get();
+    {
+        try {
+            $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+            $cursos = Curso::where('id_grado', $gradoId)->where('estado','=',$anioActual)->get();
 
-        // Verifica que la consulta devuelve datos
-        if ($cursos->isEmpty()) {
-            return response()->json(['message' => 'No se encontraron cursos para este grado'], 404);
+            // Verifica que la consulta devuelve datos
+            if ($cursos->isEmpty()) {
+                return response()->json(['message' => 'No se encontraron cursos para este grado'], 404);
+            }
+
+            return response()->json($cursos);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Ocurrió un error: ' . $e->getMessage()], 500);
         }
-
-        return response()->json($cursos);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Ocurrió un error: ' . $e->getMessage()], 500);
     }
-}
 
  
     public function create()
     {
+        $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
         $grado = Grado::join('acad_nivel','acad_grado.id_nivel','=','acad_nivel.id_nivel')->select(
             'acad_grado.id_grado as id_grado',
             'acad_grado.nombre as grado',
             'acad_nivel.nombre as nivel' 
-        )->get();
+        )->where('acad_grado.estado','=',$anioActual)->get();
         $diaSemana = DiaSemana::all();
-        $cursos = Curso::all();
+        $cursos = Curso::where('estado','=',$anioActual);
         $horas = Hora::all();
         return view('horario.crear', compact('grado','diaSemana','horas','cursos'));
     }
 
  
+
+
+
+
     public function store(Request $request)
     {
         $horarios = json_decode($request->input('horarios'), true); // Decodificas el JSON
-    
+        $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
         // Validar los horarios en base a los datos enviados
         foreach ($horarios as $horarioData) {
             // Crear el validador para verificar la existencia de horarios duplicados
@@ -88,8 +96,16 @@ class HorarioController extends Controller
                 'idDiaSemana' => $horarioData['idDiaSemana'],
                 'idHora' => $horarioData['idHora'],
                 'id_grado' => $horarioData['id_grado'],
+                'estado' =>  $anioActual
             ]);
         }
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'C';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Horario';
+            $auditoria->save();
     
         // Si todo sale bien, redirigir con mensaje de éxito
         return redirect()->route('horario.create')
@@ -97,11 +113,14 @@ class HorarioController extends Controller
     }
     
 
+
+
  
     public function show(Request $request){
         $query = Grado::join('acad_nivel', 'acad_grado.id_nivel', '=', 'acad_nivel.id_nivel')
                   ->select('acad_grado.id_grado as id_grado', 'acad_grado.nombre as grado', 'acad_nivel.nombre as nivel');
-
+                  $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+                  $query->where('acad_grado.estado', '=', $anio);
     // Condición para filtrar grados que tengan al menos un horario asociado
     $query->whereHas('horario', function ($query) {
         $query->whereNotNull('id_grado');
@@ -114,12 +133,13 @@ class HorarioController extends Controller
     public function editando($id)
 {
     // Consulta los horarios asociados al grado
-    $horarios = Horario::with(['grado', 'diaSemana', 'hora', 'curso'])->where('id_grado', $id)->get();
+    $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+    $horarios = Horario::with(['grado', 'diaSemana', 'hora', 'curso'])->where('id_grado', $id)->where('estado','=',$anio)->get();
 
     // Realiza un INNER JOIN entre cursos y grados para obtener solo los cursos que pertenecen al grado
     $cursos = DB::table('acad_cursos')
         ->join('acad_grado', 'acad_cursos.id_grado', '=', 'acad_grado.id_grado')
-        ->where('acad_grado.id_grado', $id)
+        ->where('acad_grado.id_grado', $id)->where('acad_cursos.estado',$anio)
         ->select('acad_cursos.acu_id', 'acad_cursos.acu_nombre')
         ->get();
 
@@ -134,7 +154,7 @@ class HorarioController extends Controller
 public function update(Request $request, $id_grado)
 {
     $horarios = $request->input('horarios'); // Datos enviados desde el formulario
-
+    $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
     if (!$horarios) {
         return redirect()->route('horario.show')
             ->withCookie(cookie('error', 'No se recibieron datos del horario.', 1));
@@ -165,6 +185,7 @@ public function update(Request $request, $id_grado)
                     ],
                     [
                         'acu_id' => $acu_id,
+                        'estado' => $anio
                     ]
                 );
 
@@ -181,6 +202,13 @@ public function update(Request $request, $id_grado)
             'acu_id' => null,
         ]);
 
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'U';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Horario';
+            $auditoria->save();
+
     return redirect()->route('horario.index')->with('success', 'Horario actualizado con éxito.');
 }
 
@@ -190,7 +218,8 @@ public function eliminar()
     { // Obtiene todos los grados con sus horarios
         $query = Grado::join('acad_nivel', 'acad_grado.id_nivel', '=', 'acad_nivel.id_nivel')
         ->select('acad_grado.id_grado as id_grado', 'acad_grado.nombre as grado', 'acad_nivel.nombre as nivel');
-
+        $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+        $query->where('acad_grado.estado', '=', $anio);
 // Condición para filtrar grados que tengan al menos un horario asociado
 $query->whereHas('horario', function ($query) {
 $query->whereNotNull('id_grado');
@@ -200,12 +229,17 @@ $grado = $query->paginate(10); // Pagina los resultados
 return view('horario.eliminar', compact('grado'));
     }
 
-    public function destroyByGrado($id_grado)
+    public function destroyByGrado($id_grado, Request $request)
     {
         try {
             // Eliminar todos los horarios asociados al id_grado
             $horariosEliminados = Horario::where('id_grado', $id_grado)->delete();
-    
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'D';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Horario';
+            $auditoria->save();
             if ($horariosEliminados) {
                 // Redireccionar con mensaje de éxito
                 return redirect()->route('horario.eliminar')->withCookie(cookie('success', 'Horarios eliminados con éxito.', 1));
@@ -223,9 +257,16 @@ return view('horario.eliminar', compact('grado'));
 
 
 
-    public function listar()
+    public function listar(Request $request)
     {
-        $grados = DB::table('acad_grado')->get(); // Recupera todos los grados académicos
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'C';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Horario';
+            $auditoria->save();
+            $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+        $grados = DB::table('acad_grado')->where('estado','=',$anio)->get(); // Recupera todos los grados académicos
         return view('horario.listar', compact('grados'));
     }
 
@@ -235,13 +276,14 @@ return view('horario.eliminar', compact('grado'));
     // Obtener los días de la semana y las horas
     $dias = DB::table('diassemana')->get();
     $horas = DB::table('hora')->get();
-
+    $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
     // Obtener los horarios específicos para el grado
     $horarios = DB::table('horario')
         ->join('hora', 'horario.idHora', '=', 'hora.idHora')
         ->join('diassemana', 'horario.idDiaSemana', '=', 'diassemana.idDiaSemana')
         ->join('acad_cursos', 'horario.acu_id', '=', 'acad_cursos.acu_id')
         ->where('horario.id_grado', $id_grado)
+        ->where('horario.estado', $anio )
         ->select('hora.nombreHora', 'diassemana.nombreDia', 'acad_cursos.acu_nombre')
         ->get();
 

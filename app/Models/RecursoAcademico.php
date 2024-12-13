@@ -18,6 +18,7 @@ class RecursoAcademico extends Model
         'id_curso',
         'fecha_subida',
         'estado',
+        'estadobim'
     ];
 
     public $timestamps = false;

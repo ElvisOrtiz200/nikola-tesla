@@ -29,7 +29,7 @@
                     <p class="text-gray-500">No hay cursos registrados para este estudiante.</p>
                 @else
                     @foreach ($cursos as $curso)
-                        <a href="#" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium">
+                        <a href="{{ route('estudiantescursodetalle.show', $curso->acu_id) }}" class="text-cyan-500 bg-yellow-400 hover:bg-cyan-500 hover:text-yellow-400 block rounded-md py-2 px-3 text-base font-medium">
                             {{ $curso->acu_nombre }}
                         </a>
                     @endforeach

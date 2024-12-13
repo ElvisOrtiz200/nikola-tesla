@@ -4,41 +4,56 @@
 
 <div class="container mx-auto my-4">
     <!-- Search bar -->
-    <div class="mb-4 flex justify-between items-center">
-        <input type="text" id="search" class="p-2 border rounded" placeholder="Buscar...">
-    </div>
 
-    <!-- Tabla de estudiantes cursos -->
+
+    <div class="mb-4">
+        <form action="{{ route('estudiante-curso.listar') }}" method="GET" class="flex space-x-2">
+            <input 
+                type="text" 
+                name="search" 
+                value="{{ $search ?? '' }}" 
+                placeholder="Buscar por DNI, nombre o apellido" 
+                class="border rounded px-4 py-2 w-1/2"
+            >
+            <button 
+                type="submit" 
+                class="bg-blue-500 text-white px-4 py-2 rounded">
+                Buscar
+            </button>
+        </form>
+    </div>
+    
+    <!-- Tabla de estudiantes con grado y nivel -->
     <table class="min-w-full bg-white border border-gray-200">
         <thead>
             <tr>
                 <th class="px-4 py-2 border-b text-left">DNI Estudiante</th>
                 <th class="px-4 py-2 border-b text-left">Nombre Estudiante</th>
-                <th class="px-4 py-2 border-b text-left">Curso</th>
-                <th class="px-4 py-2 border-b text-left">Docente</th>
-                <th class="px-4 py-2 border-b text-left">Bimestre</th>
-                <th class="px-4 py-2 border-b text-left">Año</th>
+                <th class="px-4 py-2 border-b text-left">Apellido Estudiante</th>
+                <th class="px-4 py-2 border-b text-left">Grado</th>
+                <th class="px-4 py-2 border-b text-left">Nivel</th>
             </tr>
         </thead>
-        <tbody id="table-body">
-            <!-- Aquí se llenarán los datos de la tabla -->
-            @foreach($estudiantesCursos as $estudianteCurso)
-            <tr>
-                <td class="px-4 py-2 border-b">{{ $estudianteCurso->alu_dni }}</td>
-                <td class="px-4 py-2 border-b">{{ $estudianteCurso->alu_nombres }} {{ $estudianteCurso->alu_apellidos }}</td>
-                <td class="px-4 py-2 border-b">{{ $estudianteCurso->acu_nombre }}</td>
-                <td class="px-4 py-2 border-b">{{ $estudianteCurso->docente_nombre }}</td>
-                <td class="px-4 py-2 border-b">{{ $estudianteCurso->bim_sigla }}</td>
-                <td class="px-4 py-2 border-b">{{ $estudianteCurso->acdo_anio }}</td>
-            </tr>
+        <tbody>
+            @foreach($estudiantesGrados as $estudiante)
+                <tr>
+                    <td class="px-4 py-2 border-b">{{ $estudiante->alu_dni }}</td>
+                    <td class="px-4 py-2 border-b">{{ $estudiante->alu_nombres }}</td>
+                    <td class="px-4 py-2 border-b">{{ $estudiante->alu_apellidos }}</td>
+                    <td class="px-4 py-2 border-b">{{ $estudiante->grado_nombre }}</td>
+                    <td class="px-4 py-2 border-b">{{ $estudiante->nivel_nombre }}</td>
+                </tr>
             @endforeach
         </tbody>
     </table>
-
+    
     <!-- Enlaces de Paginación -->
     <div class="mt-4">
-        {{ $estudiantesCursos->links() }}
+        {{ $estudiantesGrados->links() }}
     </div>
+    
+    
+    
 </div>
 
 <script>

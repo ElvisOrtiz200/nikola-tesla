@@ -16,6 +16,7 @@ class Asistencia extends Model
         'acdo_id',
         'asistencia',
         'fecha',
+        'estado'
     ];
 
     // Relación con el modelo AcadEstudiante

@@ -128,7 +128,7 @@
                             </a>
                         </li>
                 
-                        <!-- Botón 2 (Usuarios) -->
+                        <!-- Botón 2 (Usuarios) auditorialog.index-->
                         <li class=" flex w-full justify-between text-gray-400 hover:text-yellow-400 cursor-pointer items-center mb-6 ">
                             <a href="{{ route('usuario.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -138,6 +138,18 @@
                                 </svg>
 
                                 <span class="text-sm ml-6">Usuarios</span>
+                            </a>
+                        </li>
+
+                        <li class=" flex w-full justify-between text-gray-400 hover:text-yellow-400 cursor-pointer items-center mb-6 ">
+                            <a href="{{ route('auditorialog.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z"></path>
+                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                    <circle cx="12" cy="12" r="9"></circle>
+                                </svg>
+
+                                <span class="text-sm ml-6">LOG</span>
                             </a>
                         </li>
                     </ul>
@@ -340,218 +352,303 @@
                     </svg>
                 </button>
                 <div class="px-8">
-                    <div class="h-16 w-full flex items-center">
-                        <img viewBox="0 0 54 40" class="h-12 mr-2" fill="none" src="/img/logo_tesla.png" alt="Logo Escuela" />
-                        <span class="text-surface-900 dark:text-surface-0 font-medium text-lg leading-normal text-white">NIKOLA TESLA</span>
+                   
+
+
+
+                    @if ($nombreRol == "Estudiante"  )
+                    <div class="flex flex-col">
+                        <div class="h-16 w-full flex items-center">
+                            <img viewBox="0 0 54 40" class="h-12 mr-2" fill="none" src="/img/logo_tesla.png" alt="Logo Escuela" />
+                            <span class="text-surface-900 dark:text-surface-0 font-medium text-lg leading-normal text-white">NIKOLA TESLA</span>
+                        </div>
+    
+                            <div>
+                                <li class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6 mt-11">
+                                    <a href="{{route('estudiantesCursosVistas.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z"></path>
+                                            <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                            <circle cx="12" cy="12" r="9"></circle>
+                                        </svg>
+                                        <span class="text-sm ml-6">Mis cursos</span>
+                                    </a>
+                                </li>   
+                                
+                                <li class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6 mt-11">
+                                    <a href="{{route('estudiantesHorarioVistas.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z"></path>
+                                            <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                            <circle cx="12" cy="12" r="9"></circle>
+                                        </svg>
+                                        <span class="text-sm ml-6">Horario</span>
+                                    </a>
+                                </li>   
+                            </div>
                     </div>
-
-
-
-                    @if ($nombreRol == "Administrador")
-
-                    <button id="toggleButton5" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
-                        <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
-                        <span>Gestión de Usuarios</span>
-                        <svg id="arrowIcon5" xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 transition-transform transform rotate-0" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.292 7.707a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                
-                    <!-- Contenedor de botones con efecto de deslizamiento -->
-                    <ul id="buttonList5" class="hidden transition-all duration-300 ease-in-out overflow-hidden max-h-0">
-                        <!-- Botón 1 (Roles) -->
-                        <li class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6">
-                            <a href="{{ route('rol.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-6">Roles</span>
-                            </a>
-                        </li>
-                
-                        <!-- Botón 2 (Usuarios) -->
-                        <li class=" flex w-full justify-between text-gray-400 hover:text-yellow-400 cursor-pointer items-center mb-6 ">
-                            <a href="{{ route('usuario.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-
-                                <span class="text-sm ml-6">Usuarios</span>
-                            </a>
-                        </li>
-                    </ul>
-
-
-
+                        
+                      
                     @endif
-
-
-                    @if ($nombreRol == "Administrador")
-
-                    <button id="toggleButton6" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
-                        <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
-                        <span>Gestión Académica</span>
-                        <svg id="arrowIcon6" xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 transition-transform transform rotate-0" viewBox="0 0 20 20" fill="currentColor2">
-                            <path fill-rule="evenodd" d="M5.292 7.707a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                
-                    <!-- Contenedor de botones con efecto de deslizamiento -->
-                    <ul id="buttonList6" class="hidden transition-all duration-300 ease-in-out overflow-hidden max-h-0">
-                        <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
-                            <a href="{{route('curso-docente.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-2">Asignar docentes a cursos</span>
-                            </a>
-                        </li>
-                        <!-- Botón 1 (Roles) -->
-                        <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
-                            <a href="{{route('curso.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-2">Cursos</span>
-                            </a>
-                        </li>
-                        <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
-                            <a href="{{route('bimestre.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-2">Bimestres</span>
-                            </a>
-                        </li>
-                        <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
-                            <a href="{{route('nivel.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-2">Nivel Educativo</span>
-                            </a>
-                        </li>
-                        <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
-                            <a href="{{route('grado.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-2">Grado Educativo</span>
-                            </a>
-                        </li>
-                        <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
-                            <a href="{{route('aula.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-2">Aula Educativo</span>
-                            </a>
-                        </li>
-                       
+    
+                    @if ( $nombreRol == "Docente" )
+    
+                    <div class="flex flex-col">
+                        <div class="h-16 w-full flex items-center">
+                            <img viewBox="0 0 54 40" class="h-12 mr-2" fill="none" src="/img/logo_tesla.png" alt="Logo Escuela" />
+                            <span class="text-surface-900 dark:text-surface-0 font-medium text-lg leading-normal text-white">NIKOLA TESLA</span>
+                        </div>
+                        <div class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6 mt-11">
+    
+    
+                        <a href="{{route('docentesCursosVistas.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z"></path>
+                                <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                <circle cx="12" cy="12" r="9"></circle>
+                            </svg>
+                            <span class="text-sm ml-6">Mis cursos Docentes Vista</span>
+                        </a>
+                        </div> 
+    
+                        </div>
                      
+                @endif
+                    
+                    @if ($nombreRol == "Administrador" )
+                    <div class="px-8">
+                        <div class="h-16 w-full flex items-center">
+                            <img viewBox="0 0 54 40" class="h-12 mr-2" fill="none" src="/img/logo_tesla.png" alt="Logo Escuela" />
+                            <span class="text-surface-900 dark:text-surface-0 font-medium text-lg leading-normal text-white">NIKOLA TESLA</span>
+                        </div>
+                       {{-- MOBIL --}}
+                       {{-- MOBIL --}}
+                       {{-- MOBIL --}}
+                       {{-- MOBIL --}}
+                       {{-- MOBIL --}}
+                       {{-- MOBIL --}}
+                       {{-- MOBIL --}}
+                       {{-- MOBIL --}}
 
-                    </ul>
-                    @endif
-
-
-
-
-
-
-
-                    @if ($nombreRol == "Administrador")
-                    <button id="toggleButton7" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
-                        <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
-                        <span>Gestión de Personal</span>
-                        <svg id="arrowIcon7" xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 transition-transform transform rotate-0" viewBox="0 0 20 20" fill="currentColor2">
-                            <path fill-rule="evenodd" d="M5.292 7.707a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                
-                    <!-- Contenedor de botones con efecto de deslizamiento -->
-                    <ul id="buttonList7" class="hidden transition-all duration-300 ease-in-out overflow-hidden max-h-0">
-                        <!-- Botón 1 (Roles) -->
-                        <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
-                            <a href="{{route('recursoshh.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-2">Recursos Humanos</span>
-                            </a>
-                        </li>
-                        <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
-                            <a href="{{route('docente.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-2">Docentes</span>
-                            </a>
-                        </li>
-                        
-                    </ul>
-
-
-                    @endif
-
-                    @if ($nombreRol == "Administrador")
-
-                    <button id="toggleButton8" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
-                        <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
-                        <span>Gestión de Estudiantes</span>
-                        <svg id="arrowIcon8" xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 transition-transform transform rotate-0" viewBox="0 0 20 20" fill="currentColor4">
-                            <path fill-rule="evenodd" d="M5.292 7.707a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                
-                    <!-- Contenedor de botones con efecto de deslizamiento -->
-                    <ul id="buttonList8" class="hidden transition-all duration-300 ease-in-out overflow-hidden max-h-0">
-                        <!-- Botón 1 (Roles) -->
-                        <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
-                            <a href="{{route('estudiante.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-2">Estudiantes</span>
-                            </a>
-                        </li>
                        
-                        
-                        <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
-                            <a href="{{route('apoderado.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white" >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"></path>
-                                    <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
-                                    <circle cx="12" cy="12" r="9"></circle>
-                                </svg>
-                                <span class="text-sm ml-2">Apoderados</span>
-                            </a>
-                        </li>
-                        
-                    </ul>
-
-                    @endif                   
+                        <button id="toggleButtonMB1" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
+                            <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
+                            <span>Gestión de Usuarios</span>
+                            <svg id="arrowIcon8MB1" xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 transition-transform transform rotate-0" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.292 7.707a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    
+                        <!-- Contenedor de botones con efecto de deslizamiento -->
+                        <ul id="buttonListMB1" class="hidden transition-all duration-300 ease-in-out overflow-hidden max-h-0">
+                            <!-- Botón 1 (Roles) -->
+                            <li class="flex w-full justify-between text-gray-300 hover:text-yellow-400 cursor-pointer items-center mb-6">
+                                <a href="{{ route('rol.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-6">Roles</span>
+                                </a>
+                            </li>
+                    
+                            <!-- Botón 2 (Usuarios) -->
+                            <li class=" flex w-full justify-between text-gray-400 hover:text-yellow-400 cursor-pointer items-center mb-6 ">
+                                <a href="{{ route('usuario.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+    
+                                    <span class="text-sm ml-6">Usuarios</span>
+                                </a>
+                            </li>
+                            <li class=" flex w-full justify-between text-gray-400 hover:text-yellow-400 cursor-pointer items-center mb-6 ">
+                                <a href="{{ route('auditorialog.index') }}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+    
+                                    <span class="text-sm ml-6">LOG</span>
+                                </a>
+                            </li>
+                        </ul>
+    
+                       
+    
+                        <button id="toggleButtonMB2" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
+                            <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
+                            <span>Gestión Académica</span>
+                            <svg id="arrowIconMB2" xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 transition-transform transform rotate-0" viewBox="0 0 20 20" fill="currentColor2">
+                                <path fill-rule="evenodd" d="M5.292 7.707a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    
+                        <!-- Contenedor de botones con efecto de deslizamiento -->
+                        <ul id="buttonListMB2" class="hidden transition-all duration-300 ease-in-out overflow-hidden max-h-0">
+                            <!-- Botón 1 (Roles) -->
+    
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('estudiante-curso.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Asignar estudiantes a grado</span>
+                                </a>
+                            </li>
+                            
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('curso-docente.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Asignar docentes a cursos</span>
+                                </a>
+                            </li>
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('curso.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Cursos</span>
+                                </a>
+                            </li>
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('bimestre.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Bimestres</span>
+                                </a>
+                            </li>
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('nivel.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Nivel Educativo</span>
+                                </a>
+                            </li>
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('grado.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Grado Educativo</span>
+                                </a>
+                            </li>
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('aula.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Aula Educativo</span>
+                                </a>
+                            </li>
+    
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('horario.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Horarios</span>
+                                </a>
+                            </li>
+                           
+                         
+    
+                        </ul>
+                      
+                        <button id="toggleButtonMB3" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
+                            <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
+                            <span>Gestión de Personal</span>
+                            <svg id="arrowIcon8MB3" xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 transition-transform transform rotate-0" viewBox="0 0 20 20" fill="currentColor2">
+                                <path fill-rule="evenodd" d="M5.292 7.707a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    
+                        <!-- Contenedor de botones con efecto de deslizamiento -->
+                        <ul id="buttonListMB3" class="hidden transition-all duration-300 ease-in-out overflow-hidden max-h-0">
+                            <!-- Botón 1 (Roles) -->
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('recursoshh.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Recursos Humanos</span>
+                                </a>
+                            </li>
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('docente.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Docentes</span>
+                                </a>
+                            </li>
+                            
+                        </ul>
+                        <button id="toggleButtonMB4" class="bg-gray-600 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded mb-4 flex items-center">
+                            <span><img width="50" height="50" src="https://img.icons8.com/ios-filled/50/1A1A1A/groups.png" alt="groups"/></span>
+                            <span>Gestión de Estudiantes</span>
+                            <svg id="arrowIcon8MB4" xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 transition-transform transform rotate-0" viewBox="0 0 20 20" fill="currentColor4">
+                                <path fill-rule="evenodd" d="M5.292 7.707a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    
+                        <!-- Contenedor de botones con efecto de deslizamiento -->
+                        <ul id="buttonListMB4" class="hidden transition-all duration-300 ease-in-out overflow-hidden max-h-0">
+                            <!-- Botón 1 (Roles) -->
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('estudiante.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Estudiantes</span>
+                                </a>
+                            </li>
+                           
+                            
+                            <li class="flex w-full justify-between text-gray-400 hover:text-gray-300 cursor-pointer items-center mb-6">
+                                <a href="{{route('apoderado.index')}}" class="flex items-center focus:outline-none focus:ring-2 focus:ring-white" >
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-compass" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"></path>
+                                        <polyline points="8 16 10 10 16 8 14 14 8 16"></polyline>
+                                        <circle cx="12" cy="12" r="9"></circle>
+                                    </svg>
+                                    <span class="text-sm ml-2">Apoderados</span>
+                                </a>
+                            </li>
+                            
+                        </ul>
+                    </div>
+                    @endif         
                     <div class="flex justify-center mt-48 mb-4 w-full">
                         <div class="relative">
                             <div class="text-gray-300 absolute ml-4 inset-0 m-auto w-4 h-4">
@@ -567,7 +664,7 @@
             <!-- Sidebar ends -->
             <!-- Remove class [ h-64 ] when adding a card block -->
 
-            <div class="container mx-auto pt-10 md:w-4/5 w-11/12 px-6">
+            <div class="container ml-8 pt-10 md:w-4/5 w-11/12">
                 <nav x-data="{ isOpen: false }" class="relative bg-white shadow dark:bg-gray-800 ">
                     <div class="container px-6 py-4 mx-auto md:flex md:justify-between md:items-center">
                         <div class="flex items-center justify-between">
@@ -779,6 +876,96 @@ document.getElementById('closeSideBar').addEventListener('click', function() {
             arrowIcon8.classList.remove('rotate-180');  // Rotar la flecha hacia abajo
             setTimeout(() => {
                 buttonList8.classList.add('hidden');
+            }, 300);  // Mantener efecto de animación antes de ocultar completamente
+        }
+    });
+</script>
+
+
+<script>
+    const toggleButton81 = document.getElementById('toggleButtonMB1');
+    const buttonList81 = document.getElementById('buttonListMB1');
+    const arrowIcon81 = document.getElementById('arrowIcon8MB1');
+    toggleButton81.addEventListener('click', () => {
+        // Alternar visibilidad de los botones
+        if (buttonList81.classList.contains('hidden')) {
+            buttonList81.classList.remove('hidden');
+            buttonList81.classList.add('block');
+            buttonList81.style.maxHeight = buttonList81.scrollHeight + 'px';  // Expandir lista
+            arrowIcon81.classList.add('rotate-180');  // Rotar la flecha hacia arriba
+        } else {
+            buttonList81.style.maxHeight = '0px';  // Colapsar lista
+            arrowIcon81.classList.remove('rotate-180');  // Rotar la flecha hacia abajo
+            setTimeout(() => {
+                buttonList81.classList.add('hidden');
+            }, 300);  // Mantener efecto de animación antes de ocultar completamente
+        }
+    });
+</script>
+
+
+
+<script>
+    const toggleButton82 = document.getElementById('toggleButtonMB2');
+    const buttonList82 = document.getElementById('buttonListMB2');
+    const arrowIcon82 = document.getElementById('arrowIconMB2');
+    toggleButton82.addEventListener('click', () => {
+        // Alternar visibilidad de los botones
+        if (buttonList82.classList.contains('hidden')) {
+            buttonList82.classList.remove('hidden');
+            buttonList82.classList.add('block');
+            buttonList82.style.maxHeight = buttonList82.scrollHeight + 'px';  // Expandir lista
+            arrowIcon82.classList.add('rotate-180');  // Rotar la flecha hacia arriba
+        } else {
+            buttonList82.style.maxHeight = '0px';  // Colapsar lista
+            arrowIcon82.classList.remove('rotate-180');  // Rotar la flecha hacia abajo
+            setTimeout(() => {
+                buttonList82.classList.add('hidden');
+            }, 300);  // Mantener efecto de animación antes de ocultar completamente
+        }
+    });
+</script>
+
+
+<script>
+    const toggleButton83 = document.getElementById('toggleButtonMB3');
+    const buttonList83 = document.getElementById('buttonListMB3');
+    const arrowIcon83 = document.getElementById('arrowIcon8MB3');
+    toggleButton83.addEventListener('click', () => {
+        // Alternar visibilidad de los botones
+        if (buttonList83.classList.contains('hidden')) {
+            buttonList83.classList.remove('hidden');
+            buttonList83.classList.add('block');
+            buttonList83.style.maxHeight = buttonList83.scrollHeight + 'px';  // Expandir lista
+            arrowIcon83.classList.add('rotate-180');  // Rotar la flecha hacia arriba
+        } else {
+            buttonList83.style.maxHeight = '0px';  // Colapsar lista
+            arrowIcon83.classList.remove('rotate-180');  // Rotar la flecha hacia abajo
+            setTimeout(() => {
+                buttonList83.classList.add('hidden');
+            }, 300);  // Mantener efecto de animación antes de ocultar completamente
+        }
+    });
+</script>
+
+
+
+<script>
+    const toggleButton84 = document.getElementById('toggleButtonMB4');
+    const buttonList84 = document.getElementById('buttonListMB4');
+    const arrowIcon84 = document.getElementById('arrowIcon8MB4');
+    toggleButton84.addEventListener('click', () => {
+        // Alternar visibilidad de los botones
+        if (buttonList84.classList.contains('hidden')) {
+            buttonList84.classList.remove('hidden');
+            buttonList84.classList.add('block');
+            buttonList84.style.maxHeight = buttonList84.scrollHeight + 'px';  // Expandir lista
+            arrowIcon84.classList.add('rotate-180');  // Rotar la flecha hacia arriba
+        } else {
+            buttonList84.style.maxHeight = '0px';  // Colapsar lista
+            arrowIcon84.classList.remove('rotate-180');  // Rotar la flecha hacia abajo
+            setTimeout(() => {
+                buttonList84.classList.add('hidden');
             }, 300);  // Mantener efecto de animación antes de ocultar completamente
         }
     });

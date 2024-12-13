@@ -10,7 +10,7 @@ class Nivel extends Model
     use HasFactory;
     protected $table = 'acad_nivel';
     protected $primaryKey = 'id_nivel';
-    protected $fillable = ['nombre'];
+    protected $fillable = ['nombre','estado'];
 
     // Relación con Grado
     public function grados()

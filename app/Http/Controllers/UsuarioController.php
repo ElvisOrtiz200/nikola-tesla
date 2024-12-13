@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditoriaLog;
 use App\Models\Estudiante;
 use App\Models\RecursosHumanos;
 use App\Models\Rol;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
-
+use Carbon\Carbon;
 class UsuarioController extends Controller
 {
     /**
@@ -137,13 +138,19 @@ class UsuarioController extends Controller
         return view('usuario.eliminando', compact('usuario'));
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id, Request $request)
     {
         $registro = Usuario::find($id);
 
     if ($registro) {
         // Elimina el registro
         $registro->delete();
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'R';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Rol';
+            $auditoria->save();
 
         // Retorna una respuesta, redirige o envía un mensaje
         return redirect()->route('usuario.eliminar') // Cambia a la ruta que desees
@@ -159,5 +166,31 @@ class UsuarioController extends Controller
 
          // Retornar la vista 'roles.index' y pasar los roles a la vista
          return view('usuario.eliminar', compact('usuario'));
+    }
+
+
+
+
+
+
+
+    public function indexAuditoria(Request $request)
+    {
+        $query = Auditorialog::query();
+
+    // Filtros de búsqueda
+    if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where('entidad', 'like', "%$search%")
+              ->orWhere('usuario', 'like', "%$search%")
+              ->orWhere('operacion', 'like', "%$search%");
+    } else {
+        $search = ''; // Definir la variable $search para evitar errores
+    }
+
+    // Obtener los datos
+    $auditorias = $query->orderBy('fecha', 'desc')->paginate(10);
+
+        return view('usuario.Auditoria', compact('auditorias', 'search'));
     }
 }

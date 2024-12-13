@@ -1,4 +1,4 @@
-@extends('apoderado.index')
+@extends('curso.index')
 
 @section('subcontent') 
 

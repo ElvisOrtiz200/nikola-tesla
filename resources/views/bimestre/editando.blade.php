@@ -47,6 +47,34 @@
                    class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring">
             <div id="errorFechaFin" class="text-red-500 text-sm hidden mt-1"></div>
         </div>
+
+        <div class="my-4">
+            <label for="estadoBIMESTRE" class="block text-lg font-semibold mb-2">Estado del Bimestre</label>
+            <div class="relative">
+                <select 
+                    name="estadoBIMESTRE" 
+                    id="estadoBIMESTRE" 
+                    class="block w-full p-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring focus:ring-blue-200 text-lg font-medium bg-gray-50">
+                    <option value="1" 
+                        class="bg-green-100 text-green-700 font-bold"
+                        {{ $bimestre->estadoBIMESTRE == 1 ? 'selected' : '' }}>
+                        🟢 ACTIVO
+                    </option>
+                    <option value="0" 
+                        class="bg-red-100 text-red-700 font-bold"
+                        {{ $bimestre->estadoBIMESTRE == 0 ? 'selected' : '' }}>
+                        🔴 INACTIVO
+                    </option>
+                </select>
+                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17l-4 4m0 0l-4-4m4 4V3" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+
     </div>
 
     <script>

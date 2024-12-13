@@ -6,7 +6,7 @@ use App\Models\RecursosHumanos;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
-
+use App\Models\AuditoriaLog;
 
 class RecursosHumanosController extends Controller
 {
@@ -53,6 +53,13 @@ class RecursosHumanosController extends Controller
     
             // Guardar en la base de datos
             $recursohh->save();
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'C';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'RRHH';
+            $auditoria->save();
     
             // Redirigir con cookie de éxito
             return redirect()->route('recursoshh.create')
@@ -125,6 +132,13 @@ class RecursosHumanosController extends Controller
     
             // Guardar los cambios
             $recursohh->save();
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'U';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'RRHH';
+            $auditoria->save();
     
             // Redirigir con cookie de éxito
             return redirect()->route('recursoshh.show') // Cambia a la ruta que desees
@@ -156,12 +170,18 @@ class RecursosHumanosController extends Controller
         return view('recursoHumano.eliminando', compact('rrhh'));
     }
 
-    public function destroy(string $id){
+    public function destroy(string $id, Request $request){
         $registro = RecursosHumanos::find($id);
 
     if ($registro) {
         // Elimina el registro
         $registro->delete();
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'D';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'RRHH';
+            $auditoria->save();
 
         // Retorna una respuesta, redirige o envía un mensaje
         return redirect()->route('recursoshh.eliminar') // Cambia a la ruta que desees
@@ -173,6 +193,12 @@ class RecursosHumanosController extends Controller
 
     public function listar(Request $request)
     {
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'R';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'RRHH';
+            $auditoria->save();
         // Obtener el valor del buscador
         $search = $request->input('search');
 

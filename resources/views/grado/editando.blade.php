@@ -143,7 +143,7 @@
 
     confirmButton.addEventListener('click', () => {
 
-        document.getElementById('rolCrear').submit();
+        document.getElementById('roledit').submit();
     });
 
     cancelButton.addEventListener('click', () => {

@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Rol;
 use Illuminate\Http\Request;
-
+use App\Models\AuditoriaLog;
+use Carbon\Carbon;
 class RolController extends Controller
 {
     public function listado()
@@ -54,6 +55,13 @@ class RolController extends Controller
                 Rol::create([
                     'nombre_rol' => $request->nombre_rol
                 ]);
+
+                $auditoria = new AuditoriaLog();
+                $auditoria->usuario = $request->cookie('user_name');
+                $auditoria->operacion = 'C';
+                $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+                $auditoria->entidad = 'Rol';
+                $auditoria->save();
                 // Redirigir con cookie de éxito
                 return redirect()->route('rol.create')
                     ->withCookie(cookie('success', 'Rol registrado con éxito.', 1, '/', null, false, false));
@@ -84,6 +92,12 @@ class RolController extends Controller
 
     public function showListar(Request $request)
     {
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'R';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Rol';
+            $auditoria->save();
         $query = Rol::query();
 
         if ($request->has('search') && $request->search != '') {
@@ -162,6 +176,13 @@ class RolController extends Controller
         $rol->nombre_rol = $request->nombre_rol;
         $rol->save();
 
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'U';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Rol';
+            $auditoria->save();
+
         // Redirigir con mensaje de éxito
         return redirect()->route('rol.editar', ['id' => $id])
             ->withCookie(cookie('success', 'Rol actualizado con éxito.', 1, '/', null, false, false));
@@ -176,13 +197,19 @@ class RolController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id, Request $request)
     {
         $registro = Rol::find($id);
 
     if ($registro) {
         // Elimina el registro
         $registro->delete();
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'R';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Rol';
+            $auditoria->save();
 
         // Retorna una respuesta, redirige o envía un mensaje
         return redirect()->route('rol.eliminar') // Cambia a la ruta que desees

@@ -210,12 +210,12 @@ Route::group([
     Route::get('/cursos',[CursoController::class, 'index'])->middleware('check.token')->name('curso.index');
     Route::get('/cursos/listar',[CursoController::class, 'listar'])->middleware('check.token')->name('curso.listar');
 
-    //Create 
+    //Create  
     Route::get('/cursos/crear',[CursoController::class, 'create'])->middleware('check.token')->name('curso.create');
     Route::post('/cursos/crear/creado',[CursoController::class, 'store'])->middleware('check.token')->name('curso.store');
     //Update
     Route::get('/cursos/editar',[CursoController::class,'show'])->middleware(('check.token'))->name('curso.show');
-    Route::get('/cursos/editar/{id}/',[CursoController::class, 'editando'])->middleware('check.token')->name('curso.editando');
+    Route::get('/cursos/editaar/{id}/',[CursoController::class, 'editando'])->middleware('check.token')->name('curso.editando');
     Route::put('/cursos/editar/update/{id}/',[CursoController::class, 'update'])->middleware('check.token')->name('curso.update');
     //Delete
     Route::get('/cursos/eliminar/',[CursoController::class, 'delete'])->middleware('check.token')->name('curso.eliminar');
@@ -229,6 +229,7 @@ Route::group([
     //Home
     Route::get('/bimestres',[BimestreController::class, 'index'])->middleware('check.token')->name('bimestre.index');
     Route::get('/bimestres/listar',[BimestreController::class, 'index'])->middleware('check.token')->name('bimestre.listar');
+    Route::get('/bimestresListar', [BimestreController::class, 'listarBimestre'])->middleware('check.token')->name('bimestres.listar');
 
     //Create
     Route::get('/bimestres/crear',[BimestreController::class, 'create'])->middleware('check.token')->name('bimestre.create');
@@ -273,12 +274,15 @@ Route::group([
     Route::post('/estudiante-curso/crear/creado',[EstudianteCursoController::class, 'store'])->middleware('check.token')->name('estudiante-curso.store');
     //Update
     Route::get('/estudiante-curso/editar',[EstudianteCursoController::class,'show'])->middleware(('check.token'))->name('estudiante-curso.show');
-    Route::get('/estudiante-curso/editar/{id}/',[EstudianteCursoController::class, 'editando'])->middleware('check.token')->name('estudiante-curso.editando');
-    Route::put('/estudiante-curso/editar/update/{id}/',[EstudianteCursoController::class, 'update'])->middleware('check.token')->name('estudiante-curso.update');
+    Route::get('/estudiante-curso/editar/{alu_dni}',[EstudianteCursoController::class, 'editando'])->middleware('check.token')->name('estudiante-curso.editando');
+    Route::put('/estudiante-curso/update/{alu_dni}',[EstudianteCursoController::class, 'update'])->middleware('check.token')->name('estudiante-curso.update');
     //Delete
-    Route::get('/estudiante-curso/eliminar/',[EstudianteCursoController::class, 'delete'])->middleware('check.token')->name('estudiante-curso.eliminar');
-    Route::get('/estudiante-curso/eliminar/{id}/',[EstudianteCursoController::class, 'eliminando'])->middleware('check.token')->name('estudiante-curso.eliminando');
-    Route::delete('/estudiante-curso/eliminar/destroy/{id}/',[EstudianteCursoController::class, 'destroy'])->middleware('check.token')->name('estudiante-curso.destroy');
+    Route::get('/estudiante-curso/eliminar/',[EstudianteCursoController::class, 'eliminar'])->middleware('check.token')->name('estudiante-curso.eliminar');
+    Route::get('/estudiante-curso/eliminar/{alu_dni}',[EstudianteCursoController::class, 'eliminando'])->middleware('check.token')->name('estudiante-curso.eliminando');
+    Route::delete('/estudiante-curso/eliminar/destroy/{alu_dni}',[EstudianteCursoController::class, 'destroy'])->middleware('check.token')->name('estudiante-curso.destroy');
+
+    // Route::get('/asignarStuCurso/edit/{alu_dni}', [AsignarStuCursoController::class, 'edit'])->name('asignarStuCurso.edit');
+    // Route::post('/asignarStuCurso/update/{alu_dni}', [AsignarStuCursoController::class, 'update'])->name('asignarStuCurso.update');
 
 
 
@@ -325,6 +329,8 @@ Route::group([
     Route::post('/docente/guardar-asistencia', [docentesCursosVistaController::class, 'storeAsistencia'])->middleware('check.token')->name('guardar.asistencias');
 
     Route::post('/docente/asistencia/editar', [docentesCursosVistaController::class, 'editarAsistencia'])->middleware('check.token')->name('editar.asistencia');
+    Route::post('/Promedios/storePromedios/editar', [docentesCursosVistaController::class, 'storePromedios'])->middleware('check.token')->name('storePromedios');
+
 
 
     Route::get('docenteanuncios/{id}/edit', [docentesCursosVistaController::class, 'edit'])->middleware('check.token')->name('docentesAnuncios.edit');
@@ -334,7 +340,7 @@ Route::group([
 
     // web.php o api.php
   
- 
+    Route::get('/auditorialog', [UsuarioController::class, 'indexAuditoria'])->middleware('check.token')->name('auditorialog.index');
     
 
     Route::post('/register', [AuthController::class, 'register'])->middleware('check.token')->name('register');

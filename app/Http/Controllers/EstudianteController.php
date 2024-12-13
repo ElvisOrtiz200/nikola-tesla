@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Carbon\Carbon;
+use App\Models\AuditoriaLog;
 use App\Models\Apoderado;
 use App\Models\Estudiante;
 use Illuminate\Http\Request;
@@ -45,6 +46,16 @@ class EstudianteController extends Controller
             $estudiante->alu_telefono = request()->alu_telefono;
             $estudiante->alu_estado = 'A';
             $estudiante->save();
+
+
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'C';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Estudiante';
+            $auditoria->save();
+
             // Redirigir con cookie de éxito
             return redirect()->route('estudiante.create')
                 ->withCookie(cookie('success', 'Estudiante registrado con éxito.', 1, '/', null, false, false));
@@ -74,7 +85,15 @@ class EstudianteController extends Controller
 
     public function listadoListar(Request $request)
     {
-        // Crear la consulta base
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'R';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Estudiante';
+            $auditoria->save();
+
+        // Crear la consulta base 
         $query = Estudiante::with('apoderado');
 
         // Si se pasa un término de búsqueda, se agrega el filtro
@@ -137,6 +156,13 @@ class EstudianteController extends Controller
         $estudiante->alu_telefono = $request->alu_telefono;
         $estudiante->alu_estado = $request->alu_estado;
         $estudiante->save();
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'U';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Estudiante';
+            $auditoria->save();
     
         return redirect()->route('estudiante.show') // Cambia a la ruta que desees
         ->withCookie(cookie('success', 'Estudiante actualizado con éxito.', 1, '/', null, false, false));
@@ -153,14 +179,19 @@ class EstudianteController extends Controller
         return view('estudiante.eliminando', compact('estudiante'));
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id, Request $request)
     {
         $registro = Estudiante::find($id);
 
     if ($registro) {
         // Elimina el registro
         $registro->delete();
-
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'D';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Estudiante';
+            $auditoria->save();
         // Retorna una respuesta, redirige o envía un mensaje
         return redirect()->route('estudiante.eliminar') // Cambia a la ruta que desees
         ->withCookie(cookie('success', 'Estudiante eliminado con éxito.', 1, '/', null, false, false));

@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Curso_Docente extends Model
-{
+{ 
     use HasFactory;
 
     protected $table = 'acad_carga_docente';
     protected $primaryKey = 'acdo_id';
     protected $fillable = [
-       'acu_id', 'per_id', 'acdo_estado', 'acdo_anio', 'acdo_fecha_ini', 'acdo_fecha_fin', 'id_grado'
+       'acu_id', 'per_id', 'acdo_estado', 'acdo_anio', 'acdo_fecha_ini', 'acdo_fecha_fin', 'id_grado', 'estado'
     ];
     public $timestamps = false;
 
@@ -42,9 +42,14 @@ class Curso_Docente extends Model
     }
 
     public function docente()
-{
-    return $this->belongsTo(RecursosHumanos::class, 'per_id');
-}
+    {
+        return $this->belongsTo(RecursosHumanos::class, 'per_id');
+    }
+
+    public function proemdio()
+    {
+        return $this->hasMany(promediofinal::class, 'acdo_id', 'acdo_id');
+    }
 
 
 

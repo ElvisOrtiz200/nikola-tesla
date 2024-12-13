@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
  
 use Illuminate\Http\Request;
 use App\Models\Apoderado;
+use App\Models\AuditoriaLog;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
-   
+use Carbon\Carbon;
 class ApoderadoController extends Controller
 {
     public function index()
@@ -41,6 +42,17 @@ public function store(Request $request) {
             $apoderado->apo_direccion = request()->apo_direccion;
             $apoderado->apo_telefono = request()->apo_telefono;
             $apoderado->save();
+
+           
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'C';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Apoderado';
+            $auditoria->save();
+
+
+
             // Redirigir con cookie de éxito
             return redirect()->route('apoderado.create')
                 ->withCookie(cookie('success', 'Apoderado registrado con éxito.', 1, '/', null, false, false));
@@ -97,6 +109,13 @@ public function store(Request $request) {
             $apoderado->apo_direccion = $request->apo_direccion;
             $apoderado->apo_telefono = $request->apo_telefono;
             $apoderado->save();
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'U';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Apoderado';
+            $auditoria->save();
     
             // Redirigir con mensaje de éxito
             return redirect()->route('apoderado.show', $id) // Cambia a la ruta que desees
@@ -128,12 +147,18 @@ public function store(Request $request) {
         return view('apoderado.eliminando', compact('apoderado'));
     }
 
-    public function destroy(string $id){
+    public function destroy(string $id, Request $request){
         $registro = Apoderado::find($id);
 
     if ($registro) {
         // Elimina el registro
         $registro->delete();
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'D';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Apoderado';
+            $auditoria->save();
 
         // Retorna una respuesta, redirige o envía un mensaje
         return redirect()->route('apoderado.eliminar') // Cambia a la ruta que desees
@@ -142,10 +167,16 @@ public function store(Request $request) {
     return redirect()->back()->with('error', 'Registro no encontrado.');
     }
 
-
+ 
 
     public function listar(Request $request)
     {
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'R';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Apoderado';
+            $auditoria->save();
         $query = Apoderado::query();
         
         // Filtro de búsqueda

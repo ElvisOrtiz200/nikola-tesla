@@ -572,6 +572,124 @@
 
     </div>
 
+
+    <div>
+        <button 
+            onclick="toggleFormularioxc()" 
+            class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded mb-4">
+            Registrar Promedio
+        </button>
+    
+        <div id="formulario-promedios" class="hidden">
+            <h2>Registrar promedio</h2>
+    
+            <form action="{{route('storePromedios')}}" method="POST">
+                @csrf
+                <input type="hidden" name="acdo_id" value="{{ $estudiante->acdo_id }}">
+                <input type="hidden" name="cursoid" value="{{ $curso->acu_id }}">
+                <table class="w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border border-gray-300 px-4 py-2">Estudiante</th>
+                            <th class="border border-gray-300 px-4 py-2">Nota</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($estudiantes as $estudiante)
+                        <tr>
+                            <td class="border border-gray-300 px-4 py-2">
+                                {{ $estudiante->alu_nombres }} {{ $estudiante->alu_apellidos }}
+                            </td>
+                            <td class="border border-gray-300 px-4 py-2">
+                                <input type="text" name="notas[{{ $estudiante->alu_dni }}]" class="w-full border-gray-300 rounded" placeholder="Nota">
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+    
+                <div class="mt-4">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+                        Registrar Promedios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function toggleFormularioxc() {
+            const formulario = document.getElementById('formulario-promedios');
+            formulario.classList.toggle('hidden');
+        }
+    </script>
+    
+
+
+
+
+    <div>
+        <div class="mb-4">
+            @foreach($promedios2 as $bim_sigla => $detalles)
+                <button 
+                    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded mr-2"
+                    onclick="mostrarBimestre('{{ $bim_sigla }}')">
+                    {{ $detalles[0]->bim_descripcion }} ({{ $bim_sigla }})
+                </button>
+            @endforeach
+        </div>
+    
+        <!-- Tablas dinámicas por bimestre -->
+        @foreach($promedios2 as $bim_sigla => $detalles)
+        <div id="tabla-{{ $bim_sigla }}" class="bimestre-tabla hidden">
+            <h3 class="text-xl font-semibold mb-2">Bimestre: {{ $detalles[0]->bim_descripcion }} ({{ $bim_sigla }})</h3>
+            <table class="w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="border border-gray-300 px-4 py-2">Estudiante</th>
+                        <th class="border border-gray-300 px-4 py-2">Nota</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($detalles as $promedio)
+                    <tr>
+                        <td class="border border-gray-300 px-4 py-2">
+                            {{ $promedio->alu_nombres }} {{ $promedio->alu_apellidos }}
+                        </td>
+                        <td class="border border-gray-300 px-4 py-2">
+                            {{ $promedio->nota }}
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        @endforeach
+    </div>
+
+    <script>
+       function mostrarBimestre(bimSigla) {
+    // Obtener la tabla correspondiente
+    const tabla = document.getElementById('tabla-' + bimSigla);
+
+    // Verificar si la tabla está visible
+    if (tabla.classList.contains('hidden')) {
+        // Ocultar todas las tablas
+        document.querySelectorAll('.bimestre-tabla').forEach(tabla => {
+            tabla.classList.add('hidden');
+        });
+
+        // Mostrar la tabla correspondiente
+        tabla.classList.remove('hidden');
+    } else {
+        // Ocultar la tabla si ya está visible
+        tabla.classList.add('hidden');
+    }
+}
+    </script>
+    
+    
+
     <!-- Sección de Asistencia (aún no implementada) -->
     <div class="mb-6 p-4 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-700">
         <h3 class="text-xl font-semibold text-gray-700 dark:text-white">Asistencia</h3>
@@ -593,7 +711,7 @@
                     <input type="date" name="fecha" id="fecha" required
                         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
-            
+             
                 <!-- Recorriendo estudiantes -->
                 <div class="space-y-4">
                     @foreach($estudiantes as $estudiante)

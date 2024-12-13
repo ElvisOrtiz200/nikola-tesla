@@ -14,6 +14,7 @@ class EstudianteCurso extends Model
         'acdo_id',
         'alu_dni',
         'bim_sigla',
+        'estado',
      
     ];
     public $timestamps = false;

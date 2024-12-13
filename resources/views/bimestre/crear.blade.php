@@ -85,6 +85,29 @@
             <div id="error_fecha_fin" class="text-red-500 text-sm hidden mt-1"></div>
         </div>
 
+        <div class="my-4">
+            <label for="estadoBIMESTRE" class="block text-lg font-semibold mb-2">Estado del Bimestre</label>
+            <div class="relative">
+                <select 
+                    name="estadoBIMESTRE" 
+                    id="estadoBIMESTRE" 
+                    class="block w-full p-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring focus:ring-blue-200 text-lg font-medium bg-gray-50">
+                    <option value="1" class="bg-green-100 text-green-700 font-bold">
+                        🟢 ACTIVO
+                    </option>
+                    <option value="0" class="bg-red-100 text-red-700 font-bold">
+                        🔴 INACTIVO
+                    </option>
+                </select>
+                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17l-4 4m0 0l-4-4m4 4V3" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+
         </div>
         
         <script>
@@ -97,10 +120,7 @@
         
                 // Validación de Bimestre Sigla (letras, longitud entre 1 y 3)
                 const bimSigla = document.getElementById('bim_sigla').value.trim();
-                if (!bimSigla || !/^[A-Za-z]{1,3}$/.test(bimSigla)) {
-                    mostrarError('bim_sigla', 'La sigla debe contener entre 1 y 3 letras.');
-                    valid = false;
-                }
+                
         
                 // Validación de Bimestre Descripción (no vacío)
                 const bimDescripcion = document.getElementById('bim_descripcion').value.trim();

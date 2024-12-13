@@ -7,7 +7,7 @@ use App\Models\RecursosHumanos;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
-
+use App\Models\AuditoriaLog;
 class DocenteController extends Controller
 {
     public function index()
@@ -45,6 +45,14 @@ class DocenteController extends Controller
             $docente->doc_estado = 'A';
  
             $docente->save();
+
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'C';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Docente';
+            $auditoria->save();
             // Redirigir con cookie de éxito
             return redirect()->route('docente.create')
                 ->withCookie(cookie('success', 'Docente registradoasdasdas con éxito.', 1, '/', null, false, false));
@@ -114,6 +122,13 @@ class DocenteController extends Controller
     
             // Guardar los cambios
             $docente->save();
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'U';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Docente';
+            $auditoria->save();
     
             // Redirigir con cookie de éxito
             return redirect()->route('docente.show') // Cambia a la ruta que desees
@@ -153,12 +168,18 @@ class DocenteController extends Controller
     return view('docente.eliminando', compact('docente', 'rrhh'));
     }
 
-    public function destroy(string $id){
+    public function destroy(string $id, Request $request){
         $registro = Docente::find($id);
 
     if ($registro) {
         // Elimina el registro
         $registro->delete();
+        $auditoria = new AuditoriaLog();
+        $auditoria->usuario = $request->cookie('user_name');
+        $auditoria->operacion = 'D';
+        $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+        $auditoria->entidad = 'Docente';
+        $auditoria->save();
 
         // Retorna una respuesta, redirige o envía un mensaje
         return redirect()->route('docente.eliminar') // Cambia a la ruta que desees
@@ -171,6 +192,13 @@ class DocenteController extends Controller
     public function listar(Request $request)
     {
         // Buscar por nombre, DNI o especialidad
+        $auditoria = new AuditoriaLog();
+        $auditoria->usuario = $request->cookie('user_name');
+        $auditoria->operacion = 'R';
+        $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+        $auditoria->entidad = 'Docente';
+        $auditoria->save();
+
         $search = $request->input('search');
 
         $docentes = Docente::with('recursoshh')

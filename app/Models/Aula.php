@@ -10,8 +10,7 @@ class Aula extends Model
     use HasFactory;
     protected $table = 'acad_aula';
     protected $primaryKey = 'id_aula';
-
-    protected $fillable = ['nombre', 'capacidad', 'id_grado'];
+    protected $fillable = ['nombre', 'capacidad', 'id_grado','estado'];
 
     // Relación con Grado
     public function grado()

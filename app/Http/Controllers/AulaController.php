@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditoriaLog;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Validator as FacadesValidator;
 use App\Models\Aula;
+use App\Models\Bimestre;
 use App\Models\Nivel;
+use Carbon\Carbon;
 
 use App\Models\Grado;
 
@@ -20,7 +23,13 @@ class AulaController extends Controller
     public function create()
     {
         // Cargar niveles junto con sus grados
-        $niveles = Nivel::with('grados')->get(); 
+        // $bimSigla = Bimestre::where('estadoBIMESTRE', '=', '1')->value('bim_sigla');
+        // $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+        // $anioActual = now()->year;
+        // dd($anioActual);
+        // dd($bimSigla, $anio );
+        $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+        $niveles = Nivel::with('grados')->where('estado','=',$anio)->get(); 
         return view('aula.crear', compact('niveles'));
     }
     
@@ -43,7 +52,19 @@ class AulaController extends Controller
             $grado->nombre = request()->nombre;
             $grado->capacidad = request()->capacidad;
             $grado->id_grado = request()->id_grado;
+            $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+            $grado->estado =$anio ;
             $grado->save();
+
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'C';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Aula';
+            $auditoria->save();
+
+            
             // Redirigir con cookie de éxito
             return redirect()->route('aula.create')
                 ->withCookie(cookie('success', 'Aula registrado con éxito.', 1, '/', null, false, false));
@@ -56,12 +77,14 @@ class AulaController extends Controller
   
     
     public function show(Request $request){
+        $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
         $query =Aula::query(); 
     
         if ($request->has('search') && !empty($request->search)) {
             $query->where('nombre', 'like', '%' . $request->search . '%');
         
         }
+        $query->where('estado', '=', $anioActual);
     
         $aula = $query->paginate(20); // Cambia esto para paginación
     
@@ -72,15 +95,18 @@ class AulaController extends Controller
 
 
        public function editando($id, Request $request)
-{
-    // Cargar todos los grados para el dropdown
-    $grados = Grado::all();
-    
-    // Obtener el aula con el grado relacionado
-    $aulas = Aula::with('grado')->findOrFail($id);
+        {
+        // Cargar todos los grados para el dropdown
+        // $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+        // $niveles = Nivel::where('estado', '=', $anio)->get();
+        $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+        $grados = Grado::where('estado', '=', $anio)->get();
+        
+        // Obtener el aula con el grado relacionado
+        $aulas = Aula::with('grado')->findOrFail($id);
 
-    return view('aula.editando', compact('aulas', 'grados'));
-}
+        return view('aula.editando', compact('aulas', 'grados'));
+    }
 
 
     public function update(Request $request, $id) {
@@ -92,7 +118,7 @@ class AulaController extends Controller
                 'id_grado' => 'required',
 
             ]);
-    
+            
             // Si la validación falla
             if ($validator->fails()) {
                 return response()->json($validator->errors()->toJson(), 400);
@@ -105,8 +131,17 @@ class AulaController extends Controller
             $aulas->nombre = request()->nombre;
             $aulas->capacidad = request()->capacidad;
             $aulas->id_grado = request()->id_grado;
+            $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+            $aulas->estado = $anioActual;
             // Guardar los cambios
             $aulas->save();
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'U';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Aula';
+            $auditoria->save();
             
             // Redirigir con cookie de éxito
             return redirect()->route('aula.show') // Cambia a la ruta que desees
@@ -122,19 +157,21 @@ class AulaController extends Controller
     
     public function delete(Request $request){
         $query =Aula::query(); 
-    
+        
+        $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
         if ($request->has('search') && !empty($request->search)) {
             $query->where('nombre', 'like', '%' . $request->search . '%');
         
         }
-    
+        $query->where('estado', '=', $anioActual);
         $aula = $query->paginate(20); // Cambia esto para paginación
     
         return view('aula.eliminar', compact('aula')); 
    }
  
    public function eliminando($id){
-        $grados = Grado::all();
+        $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+        $grados = Grado::where('estado','=',$anioActual);
 
         // Obtener el docente con la relación cargada
         $aulas = Aula::with('grado')->findOrFail($id);
@@ -142,11 +179,17 @@ class AulaController extends Controller
         return view('aula.eliminando', compact('grados', 'aulas'));
     }
 
-    public function destroy(string $id){
+    public function destroy(string $id, Request $request){
         $registro = Aula::find($id);
         if ($registro) {
             // Elimina el registro
             $registro->delete();
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'D';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Aula';
+            $auditoria->save();
 
             // Retorna una respuesta, redirige o envía un mensaje
             return redirect()->route('aula.eliminar') // Cambia a la ruta que desees
@@ -159,9 +202,16 @@ class AulaController extends Controller
 
     public function listar(Request $request)
     {
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'R';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Aula';
+            $auditoria->save();
         // Crear una consulta básica
         $query = Aula::with('grado.nivel');
-
+        $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+        $query->where('estado', '=', $anioActual);
         // Aplicar filtro si se recibe un parámetro de búsqueda
         if ($request->has('search') && !empty($request->search)) {
             $query->where(function ($q) use ($request) {

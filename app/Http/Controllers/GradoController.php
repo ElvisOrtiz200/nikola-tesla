@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
 use App\Models\Nivel;
 use App\Models\Grado;
-
- 
+use Carbon\Carbon;
+use App\Models\AuditoriaLog;
+use App\Models\Bimestre;
 
 class GradoController extends Controller
 {
@@ -18,7 +19,8 @@ class GradoController extends Controller
 
     public function create()
     {
-        $niveles = Nivel::all();
+        $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+        $niveles = Nivel::where('estado', '=', $anio)->get();
         return view('grado.crear',compact('niveles'));
     }
 
@@ -26,6 +28,7 @@ class GradoController extends Controller
     public function store(Request $request) {
         //
         try {
+            $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
             $validator = FacadesValidator::make(request()->all(), [
                 'nombre' => 'required',
                 'id_nivel' => 'required',
@@ -38,7 +41,18 @@ class GradoController extends Controller
             $grado = new Grado();
             $grado->nombre = request()->nombre;
             $grado->id_nivel = request()->id_nivel;
+            $grado->estado =$anio;
             $grado->save();
+
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'C';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Grado';
+            $auditoria->save();
+
+
             // Redirigir con cookie de éxito
             return redirect()->route('grado.create')
                 ->withCookie(cookie('success', 'Grado registrado con éxito.', 1, '/', null, false, false));
@@ -53,7 +67,8 @@ class GradoController extends Controller
 {
     // Inicializa la consulta base
     $query = Grado::query();  // Usar query() en lugar de all()
-
+    $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+    $query->where('estado', '=', $anioActual);
     // Agregar el filtro si el parámetro 'search' existe
     if ($request->has('search') && !empty($request->search)) {
         $query->where('nombre', 'like', '%' . $request->search . '%'); // Filtrar solo por el nombre del grado
@@ -68,8 +83,8 @@ class GradoController extends Controller
 public function editando($id,Request $request)
     {
         // Cargar todos los recursos humanos para el dropdown
-    $niveles = Nivel::all();
-
+    $anio = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+    $niveles = Nivel::where('estado', '=', $anio)->get();
     // Obtener el docente con la relación cargada
     $grados = Grado::with('nivel')->findOrFail($id);
 
@@ -78,6 +93,7 @@ public function editando($id,Request $request)
 
     public function update(Request $request, $id) {
         try {
+            $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
             // Validar los datos
             $validator = FacadesValidator::make($request->all(), [
                 'nombre' => 'required',
@@ -95,8 +111,18 @@ public function editando($id,Request $request)
             // Actualizar los campos
             $grados->nombre = $request->nombre;
             $grados->id_nivel = $request->id_nivel;
+            $grados->estado = $anioActual; 
+
             // Guardar los cambios
             $grados->save();
+
+
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'U';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Grado';
+            $auditoria->save();
     
             // Redirigir con cookie de éxito
             return redirect()->route('grado.show') // Cambia a la ruta que desees
@@ -115,7 +141,8 @@ public function editando($id,Request $request)
     
     public function delete(Request $request){
         $query = Grado::query();  // Usar query() en lugar de all()
-
+        $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+        $query->where('estado', '=', $anioActual);
     // Agregar el filtro si el parámetro 'search' existe
     if ($request->has('search') && !empty($request->search)) {
         $query->where('nombre', 'like', '%' . $request->search . '%'); // Filtrar solo por el nombre del grado
@@ -137,13 +164,18 @@ public function editando($id,Request $request)
         return view('grado.eliminando', compact('grados', 'niveles'));
     }
 
-    public function destroy(string $id){
+    public function destroy(string $id, Request $request){
         $registro = Grado::find($id);
 
     if ($registro) {
         // Elimina el registro
         $registro->delete();
-
+        $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'D';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Grado';
+            $auditoria->save();
         // Retorna una respuesta, redirige o envía un mensaje
         return redirect()->route('grado.eliminar') // Cambia a la ruta que desees
         ->withCookie(cookie('success', 'Grado eliminado con éxito.', 1, '/', null, false, false));
@@ -157,6 +189,14 @@ public function editando($id,Request $request)
     {
         // Crear una consulta básica
         $query = Grado::with('nivel');
+        $anioActual = Bimestre::where('estadoBIMESTRE', '=', '1')->value('anio');
+        $query->where('estado', '=', $anioActual);
+            $auditoria = new AuditoriaLog();
+            $auditoria->usuario = $request->cookie('user_name');
+            $auditoria->operacion = 'R';
+            $auditoria->fecha = Carbon::now('America/Lima'); // Fecha y hora actual de Lima
+            $auditoria->entidad = 'Grado';
+            $auditoria->save();
 
         // Si se ha enviado el parámetro de búsqueda, agregar el filtro
         if ($request->has('search') && !empty($request->search)) {

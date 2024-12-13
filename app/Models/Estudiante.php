@@ -11,7 +11,7 @@ class Estudiante extends Model
     protected $table = 'acad_estudiantes';
     protected $primaryKey = 'alu_dni';
 
-    protected $fillable = [
+    protected $fillable = [ 
         'alu_apellidos',
         'alu_nombres',
         'apo_dni',
@@ -34,5 +34,10 @@ class Estudiante extends Model
     public function notas()
     {
         return $this->hasMany(AcadNota::class, 'alu_dni', 'alu_dni');
+    }
+
+    public function proemdio()
+    {
+        return $this->hasMany(promediofinal::class, 'alu_dni', 'alu_dni');
     }
 }

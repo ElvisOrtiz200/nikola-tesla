@@ -13,7 +13,8 @@ class Curso extends Model
     protected $fillable = [
         'acu_nombre',
         'acu_estado',
-        'id_grado'
+        'id_grado',
+        'estado'
     ];
 
     public function grado()
